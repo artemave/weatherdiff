@@ -3,10 +3,11 @@ require 'open-uri'
 
 class Location < ActiveRecord::Base
 	has_many :samples
-	validates_presense_of :name, :feed
+	validates_presence_of :name, :feed
+	validates_uniqueness_of :name, :feed
 
 	def sample(date)
-		return if date.sampled?
+		return if sampled?(date)
 
 		content = ''
 		open(feed) {|s| content = s.read }
@@ -23,7 +24,11 @@ class Location < ActiveRecord::Base
 		#
 		rss.items[0].title.split(',').each do |ri|
 			ri =~ /\s*([^:]+)\s*:\s*(.*)\s*/
-			Sample.new :name => $1, :value => $2, :date_taken => date
+			Sample.new(:name => $1, :value => $2, :date_taken => date).save
 		end
+	end
+
+	def sampled?(date)
+		samples.find {|s| s.date_taken === date }
 	end
 end

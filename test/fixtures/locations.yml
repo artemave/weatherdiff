@@ -1,9 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-one:
-  feed: MyString
-  name: MyString
+moscow:
+  feed: 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/58.xml'
+  name: 'RF, Moscow'
 
-two:
-  feed: MyString
-  name: MyString
+london:
+  feed: 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/8.xml'
+  name: 'UK, London'

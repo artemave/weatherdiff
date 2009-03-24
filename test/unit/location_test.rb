@@ -14,6 +14,13 @@ class LocationTest < ActiveSupport::TestCase
 
 	test "is location sampled?" do
 		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml'
-		assert !p.sampled?(Date.today), 'No samples for today'
+		assert !p.already_sampled?(Time.now), 'No samples for today'
+	end
+
+	test "sample" do
+		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml'
+		p.save
+		p.sample Time.now
+		assert p.samples.length == 3, "#{samples.length} samples taken"
 	end
 end

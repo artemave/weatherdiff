@@ -24,7 +24,9 @@ class Location < ActiveRecord::Base
 		#
 		rss.items[0].title.split(',').each do |ri|
 			ri =~ /\s*([^:]+)\s*:\s*(.*)\s*/
-			Sample.new(:name => $1, :value => $2, :date_taken => date, :location => self).save
+			name, val = $1, $2
+			val.gsub!(/.*?(\d+).*/, '\1')
+			Sample.new(:name => name, :value => val, :date_taken => date, :location => self).save
 		end
 	end
 

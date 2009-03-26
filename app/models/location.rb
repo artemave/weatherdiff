@@ -29,6 +29,6 @@ class Location < ActiveRecord::Base
 	end
 
 	def already_sampled?(date)
-		samples.detect {|s| s.date_taken == date.strftime('%Y-%m-%d') }
+		samples.find :first, :conditions => [ 'date_taken = ?', date ]
 	end
 end

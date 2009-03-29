@@ -1,11 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  date_taken: 2009-03-21
+  rss_ts: 2009-03-21
   name: MyString
   value: MyString
 
 two:
-  date_taken: 2009-03-21
+  rss_ts: 2009-03-21
   name: MyString
   value: MyString

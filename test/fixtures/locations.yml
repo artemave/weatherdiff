@@ -1,9 +1,10 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 moscow:
-  feed: 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/58.xml'
+  feed: 'http://feeds.bbc.co.uk/weather/feeds/rss/obs/world/58.xml'
   name: 'RF, Moscow'
-
+  tz: 'Moscow'
 london:
-  feed: 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/8.xml'
+  feed: 'http://feeds.bbc.co.uk/weather/feeds/rss/obs/world/8.xml'
   name: 'UK, London'
+  tz: 'London'

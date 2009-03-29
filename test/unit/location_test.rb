@@ -8,19 +8,19 @@ class LocationTest < ActiveSupport::TestCase
   end
 
 	test "new location" do
-		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml'
+		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml', :tz => 'Paris'
 		assert p.save, p.errors.full_messages
 	end
 
 	test "is location sampled?" do
-		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml'
+		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml', :tz => 'Paris'
 		assert !p.already_sampled?(Date.today), 'No samples for today'
 	end
 
 	test "sample" do
-		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml'
+		p = Location.new :name => 'France, Paris', :feed => 'http://feeds.bbc.co.uk/weather/feeds/rss/5day/world/40.xml', :tz => 'Paris'
 		p.save
-		p.sample Date.today
+		p.sample
 		assert p.samples.count == 3, "#{p.samples.count} samples taken"
 		assert p.already_sampled?(Date.today), 'Today is already sampled'
 	end

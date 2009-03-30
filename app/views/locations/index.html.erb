@@ -2,14 +2,16 @@
 
 <table>
   <tr>
-    <th>Feed</th>
     <th>Name</th>
+    <th>Timezone</th>
+    <th>Feed</th>
   </tr>
 
 <% for location in @locations %>
   <tr>
-    <td><%=h location.feed %></td>
     <td><%=h location.name %></td>
+    <td><%=h location.tz %></td>
+    <td><%=h location.feed %></td>
     <td><%= link_to 'Show', location %></td>
     <td><%= link_to 'Edit', edit_location_path(location) %></td>
     <td><%= link_to 'Destroy', location, :confirm => 'Are you sure?', :method => :delete %></td>

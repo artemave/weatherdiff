@@ -37,7 +37,7 @@ class Location < ActiveRecord::Base
 					logger.debug "First item in todays - #{rss_ts} - feed covers the day after. Skipping. #{rss.items[0].title}"
 					return
 				else
-					name = 'brief' # we don't want weekday in db
+					name = 'briefly' # we don't want weekday in db
 				end
 			end
 

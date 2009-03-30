@@ -4,12 +4,16 @@
   <%= f.error_messages %>
 
   <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
     <%= f.label :feed %><br />
     <%= f.text_field :feed %>
   </p>
   <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <%= f.label :tz %><br />
+    <%= f.time_zone_select :tz %>
   </p>
   <p>
     <%= f.submit "Create" %>

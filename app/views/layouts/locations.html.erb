@@ -8,8 +8,12 @@
   <%= stylesheet_link_tag 'scaffold' %>
 </head>
 <body>
+<% if logged_in? %>
+<div>User: <%=h current_user.login %> | <%= link_to 'logout', logout_url %></div>
+<% end %>
 
 <p style="color: green"><%= flash[:notice] %></p>
+<p style="color: red"><%= flash[:error] %></p>
 
 <%= yield  %>
 

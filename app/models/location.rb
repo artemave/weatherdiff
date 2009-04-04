@@ -12,6 +12,8 @@ class Location < ActiveRecord::Base
 
 		return if already_sampled?(today)
 
+		logger.debug "Start sampling #{name} for #{today}"
+
 		content = ''
 		open(feed) {|s| content = s.read }
 		rss = RSS::Parser.parse(content, false)
@@ -21,7 +23,8 @@ class Location < ActiveRecord::Base
 		rss_ts = rss.channel.date.in_time_zone(tz)
 
 		if rss_ts.to_date != today
-			raise "#{today} is not sampled, however feed ts is not for today #{rss_ts}"
+			logger.debug "#{today} is not sampled, however feed ts is not for today #{rss_ts}. Skipping."
+			return
 		end
 
 		rss.items[0].title.split(',').each_with_index do |ri, i|
@@ -43,7 +46,9 @@ class Location < ActiveRecord::Base
 
 			val.gsub!(/.*?(\d+).*/, '\1') # leave only celcius temperature value
 
-			Sample.new(:name => name, :value => val, :rss_ts => rss_ts.to_datetime, :location => self).save
+			s = Sample.new(:name => name, :value => val, :rss_ts => rss_ts.to_datetime, :location => self).save
+
+			logger.debug "Sample taken: #{s.inspect}"
 		end
 	end
 

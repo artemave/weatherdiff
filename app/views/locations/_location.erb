@@ -1,0 +1,8 @@
+<tr class="<%= cycle :even, :odd %>">
+	<td><%=h location.name %></td>
+	<td><%=h location.tz %></td>
+	<td><%=h location.samples.maximum('created_at') %></td>
+	<td><%=h location.samples.count(:location_id, :distinct => true) %></td>
+	<td><%= link_to 'Edit', edit_location_path(location) %></td>
+	<td><%= link_to 'Destroy', location, :confirm => 'Are you sure?', :method => :delete %></td>
+</tr>

@@ -1,0 +1,12 @@
+td	{
+	padding: 3px
+}
+
+.even {
+	background-color: #d0d0d0
+}
+
+.odd {
+	background-color: #f0f0f0
+}
+

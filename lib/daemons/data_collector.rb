@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # You might want to change this
-ENV["RAILS_ENV"] ||= "production"
+ENV["RAILS_ENV"] ||= "development"
 
 require File.dirname(__FILE__) + "/../../config/environment"
 
@@ -10,10 +10,14 @@ Signal.trap("TERM") do
   $running = false
 end
 
-while($running) do
+loop do
+	Location.find(:all).each do |loc|
+		loc.sample unless loc.already_sampled?(Date.today)
+		break unless $running
+	end
   
-  # Replace this with your code
-  ActiveRecord::Base.logger.info "This daemon is still running at #{Time.now}.\n"
-  
-  sleep 10
+  360.times do
+		break unless $running
+		sleep 5
+	end
 end

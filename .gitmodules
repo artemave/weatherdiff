@@ -1,3 +1,6 @@
 [submodule "vendor/plugins/daemon_generator"]
 	path = vendor/plugins/daemon_generator
 	url = git://github.com/dougal/daemon_generator.git
+[submodule "vendor/plugins/restful_authentication"]
+	path = vendor/plugins/restful_authentication
+	url = git://github.com/technoweenie/restful-authentication.git

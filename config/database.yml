@@ -21,8 +21,8 @@ test:
 
 production:
   adapter: mysql
-  database: weatherdiff_production
-  username: root
-  password: glob
-  host: localhost
-  socket: /var/lib/mysql/mysql.sock
+  database: weatherdiff
+  username: weatherdiff
+  password: weatherdiff
+  host: mysql.weatherdiff.com
+  encoding: utf8

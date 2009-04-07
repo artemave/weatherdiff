@@ -13,5 +13,20 @@
   <%=h @location.feed %>
 </p>
 
+<br/>
+<b>Samples:</b>
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Briefly</th>
+    <th>Max Temp</th>
+    <th>Min Temp</th>
+  </tr>
+
+	<%= render :partial => 'sample', :collection => @location.formatted_samples %>
+</table>
+
+<br />
+
 <%= link_to 'Edit', edit_location_path(@location) %> |
 <%= link_to 'Back', locations_path %>

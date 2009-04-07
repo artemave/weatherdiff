@@ -55,4 +55,15 @@ class Location < ActiveRecord::Base
 	def already_sampled?(date)
 		samples.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
 	end
+
+	def formatted_samples
+		fmt_samples = {}
+		samples.to_a.each do |s|
+			fmt_samples[s.rss_ts.to_s] = {} unless fmt_samples[s.rss_ts.to_s]
+			fmt_samples[s.rss_ts.to_s][s.name] = s.value
+			fmt_samples[s.rss_ts.to_s][:date] = s.rss_ts.to_s
+		end
+
+		fmt_samples.values
+	end
 end

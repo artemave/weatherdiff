@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-	before_filter :login_required
+	layout 'locations'
   # render new.rhtml
   def new
     @user = User.new

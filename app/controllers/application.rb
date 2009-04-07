@@ -21,7 +21,9 @@ class ApplicationController < ActionController::Base
 	
 	def authenticate
 		unless logged_in?
-			redirect_to '/login'
+			if User.count > 0
+				redirect_to '/login'
+			end
 		end
 	end
 end

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+touch #{deploy_to}/tmp/restart.txt

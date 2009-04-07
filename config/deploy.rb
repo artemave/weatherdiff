@@ -29,7 +29,7 @@ set :use_sudo, false
 namespace :deploy do
 	task :restart do
 		run "touch #{current_path}/tmp/restart.txt"
-		run "#{current_path}/lib/daemons/data_collector_ctl restart"
+		run "RAILS_ENV=production #{current_path}/lib/daemons/data_collector_ctl restart"
 	end
 
 	task :load_submodules do

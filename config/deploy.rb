@@ -29,6 +29,7 @@ set :use_sudo, false
 namespace :deploy do
 	task :restart do
 		run "touch #{current_path}/tmp/restart.txt"
+		run "#{current_path}lib/daemons/data_collector_ctl restart"
 	end
 
 	task :load_submodules do
@@ -36,4 +37,4 @@ namespace :deploy do
 	end
 end
 
-after "deploy:update", "deploy:load_submodules"
+#after "deploy:update", "deploy:load_submodules"

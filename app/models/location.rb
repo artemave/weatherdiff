@@ -65,7 +65,7 @@ class Location < ActiveRecord::Base
 		end
 
 		result = []
-		fmt_samples.keys.sort.each do |k|
+		fmt_samples.keys.sort {|a,b| b <=> a }.each do |k|
 			result << fmt_samples[k]
 		end
 		result

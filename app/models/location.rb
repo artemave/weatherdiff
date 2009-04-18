@@ -1,5 +1,6 @@
 require 'rss/2.0'
 require 'open-uri'
+require 'facets/hash'
 
 class Location < ActiveRecord::Base
 	has_many :samples
@@ -57,13 +58,16 @@ class Location < ActiveRecord::Base
 	end
 
 	def formatted_samples
-		fmt_samples = {}
+		fmt_samples = Hash.autonew
 		samples.to_a.each do |s|
-			fmt_samples[s.rss_ts.to_s] = {} unless fmt_samples[s.rss_ts.to_s]
 			fmt_samples[s.rss_ts.to_s][s.name] = s.value
 			fmt_samples[s.rss_ts.to_s][:date] = s.rss_ts.to_s
 		end
 
-		fmt_samples.values
+		result = []
+		fmt_samples.keys.sort.each do |k|
+			result << fmt_samples[k]
+		end
+		result
 	end
 end

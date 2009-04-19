@@ -27,8 +27,8 @@ set :deploy_via, :remote_cache
 set :use_sudo, false
 
 namespace :deploy do
-	desc "Restarting application and daemon"
 	task :restart do
+		desc "Restarting application and daemon"
 		run "touch #{current_path}/tmp/restart.txt"
 		run "RAILS_ENV=production #{current_path}/lib/daemons/data_collector_ctl restart"
 	end

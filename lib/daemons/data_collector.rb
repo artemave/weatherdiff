@@ -11,7 +11,7 @@ Signal.trap("TERM") do
 end
 
 while $running do
-	ActiveRecord::Base.logger.info "It is #{Time.now}. Time to check for new samples."
+	RAILS_DEFAULT_LOGGER.info "It is #{Time.now}. Time to check for new samples."
 	Location.find(:all).each do |loc|
 		loc.sample unless loc.already_sampled?(Date.today)
 		break unless $running
@@ -22,3 +22,4 @@ while $running do
 		sleep 5
 	end
 end
+

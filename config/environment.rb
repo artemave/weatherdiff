@@ -27,9 +27,9 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
-	config.gem 'daemons'
+	config.gem 'daemons', :lib => false
 	config.gem 'capistrano', :version => '2.5.5'
-	config.gem 'facets'
+	config.gem 'facets', :lib => false
 
 
   # Only load the plugins named here, in the order given. By default, all plugins 

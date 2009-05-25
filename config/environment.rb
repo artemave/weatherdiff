@@ -30,6 +30,7 @@ Rails::Initializer.run do |config|
 	config.gem 'daemons', :lib => false
 	config.gem 'capistrano', :version => '2.5.5'
 	config.gem 'facets', :lib => false
+  config.gem 'god', :lib => false
 
 
   # Only load the plugins named here, in the order given. By default, all plugins 

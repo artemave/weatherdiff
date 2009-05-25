@@ -30,12 +30,12 @@ namespace :deploy do
 	task :restart do
 		desc "Restarting application and daemon"
 		run "touch #{current_path}/tmp/restart.txt"
-		run "RAILS_ENV=production #{current_path}/lib/daemons/data_collector_ctl restart"
+		run "RAILS_ENV=production #{current_path}/script/daemons restart"
 	end
 
 	task :load_submodules do
-		run "cd #{current_path}; git submodule update --init"
+		run "cd #{current_path}; git submodule update --init; git submodule update"
 	end
 end
 
-#after "deploy:update", "deploy:load_submodules"
+after "deploy:update", "deploy:load_submodules"

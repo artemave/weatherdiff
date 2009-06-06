@@ -30,12 +30,16 @@ namespace :deploy do
 	task :restart do
 		desc "Restarting application and daemon"
 		run "touch #{current_path}/tmp/restart.txt"
-		run "RAILS_ENV=production #{current_path}/script/daemons restart"
+		run "god terminate; cd #{current_path}; RAILS_ENV=production god -c ./config/data_collector.god"
 	end
 
 	task :load_submodules do
 		run "cd #{current_path}; git submodule update --init; git submodule update"
 	end
+
+  task :install_gems do
+    run "cd #{current_path}; rake gems:install"
+  end
 end
 
-after "deploy:update", "deploy:load_submodules"
+after "deploy:update", "deploy:install_gems", "deploy:load_submodules"

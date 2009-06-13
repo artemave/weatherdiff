@@ -27,10 +27,8 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
-	config.gem 'daemons', :lib => false
 	config.gem 'capistrano', :version => '2.5.5'
 	config.gem 'facets', :lib => false
-  config.gem 'god', :lib => false
   config.gem 'chronic', :lib => false, :version => '0.2.3' #javan-whenever dependency
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
 

@@ -28,10 +28,14 @@ set :use_sudo, false
 
 namespace :deploy do
 	task :restart do
-		desc "Restarting application and daemon"
+		desc "Restarting application"
 		run "touch #{current_path}/tmp/restart.txt"
-		run "god terminate; cd #{current_path}; RAILS_ENV=production god -c ./config/data_collector.god"
 	end
+
+  task :update_crontab do
+    desc "Updating crontab"
+    run "cd #{current_path} && whenever --update-crontab #{application}"
+  end
 
 	task :load_submodules do
 		run "cd #{current_path}; git submodule update --init; git submodule update"
@@ -42,4 +46,4 @@ namespace :deploy do
   end
 end
 
-after "deploy:update", "deploy:install_gems", "deploy:load_submodules"
+after "deploy:update", "deploy:install_gems", "deploy:load_submodules", "deploy:update_crontab"

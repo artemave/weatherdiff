@@ -54,7 +54,14 @@ class Location < ActiveRecord::Base
 	end
 
 	def already_sampled?(date)
-		samples.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
+		logger.debug "Is #{name} already sampled for #{date}?"
+		if samples.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
+      logger.debug "Yes"
+      return true
+    else
+      logger.debug "No"
+      return false
+    end
 	end
 
 	def formatted_samples

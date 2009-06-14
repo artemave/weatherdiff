@@ -13,7 +13,7 @@ class Location < ActiveRecord::Base
 
 		return if already_sampled?(today)
 
-		logger.debug "Start sampling #{name} for #{today}"
+		logger.info "Start sampling #{name} for #{today}"
 
 		content = ''
 		open(feed) {|s| content = s.read }
@@ -24,7 +24,7 @@ class Location < ActiveRecord::Base
 		rss_ts = rss.channel.date.in_time_zone(tz)
 
 		if rss_ts.to_date != today
-			logger.debug "#{today} is not sampled, however feed ts is not for today #{rss_ts}. Skipping."
+			logger.info "#{today} is not sampled, however feed ts is not for today #{rss_ts}. Skipping."
 			return
 		end
 
@@ -38,7 +38,7 @@ class Location < ActiveRecord::Base
 			# day after
 			if i == 0 
 				if name != rss_ts.strftime('%A')
-					logger.debug "First item in todays - #{rss_ts} - feed covers the day after. Skipping. #{rss.items[0].title}"
+					logger.info "First item in todays - #{rss_ts} - feed covers the day after. Skipping. #{rss.items[0].title}"
 					return
 				else
 					name = 'briefly' # we don't want weekday in db
@@ -49,17 +49,17 @@ class Location < ActiveRecord::Base
 
 			s = Sample.new(:name => name, :value => val, :rss_ts => rss_ts.to_datetime, :location => self).save
 
-			logger.debug "Sample taken: #{s.inspect}"
+			logger.info "Sample taken: #{s.inspect}"
 		end
 	end
 
 	def already_sampled?(date)
-		logger.debug "Is #{name} already sampled for #{date}?"
+		logger.info "Is #{name} already sampled for #{date}?"
 		if samples.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
-      logger.debug "Yes"
+      logger.info "Yes"
       return true
     else
-      logger.debug "No"
+      logger.info "No"
       return false
     end
 	end

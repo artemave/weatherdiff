@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090330222559) do
+ActiveRecord::Schema.define(:version => 20091116220239) do
 
   create_table "locations", :force => true do |t|
     t.string   "feed"
@@ -17,6 +17,13 @@ ActiveRecord::Schema.define(:version => 20090330222559) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "tz"
+  end
+
+  create_table "sample_summaries", :force => true do |t|
+    t.datetime "rss_ts"
+    t.integer  "location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "samples", :force => true do |t|

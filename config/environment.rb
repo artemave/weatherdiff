@@ -31,6 +31,7 @@ Rails::Initializer.run do |config|
 	config.gem 'facets', :lib => false
   config.gem 'chronic', :lib => false, :version => '0.2.3' #javan-whenever dependency
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
+  config.gem 'will_paginate'
 
 
   # Only load the plugins named here, in the order given. By default, all plugins 

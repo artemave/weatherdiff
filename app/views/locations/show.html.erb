@@ -23,7 +23,7 @@
     <th>Min Temp</th>
   </tr>
 
-	<%= render :partial => 'sample', :collection => @location.formatted_samples %>
+  <%= render :partial => 'sample', :collection => @location.sample_summaries, :as => :ss %>
 </table>
 
 <br />

@@ -3,9 +3,11 @@ require 'open-uri'
 require 'facets/hash'
 
 class Location < ActiveRecord::Base
-	has_many :samples
+	has_many :sample_summaries
 	validates_presence_of :name, :feed, :tz
 	validates_uniqueness_of :name, :feed
+
+  named_scope :with_samples, :include => :sample_summaries
 
 	def sample
 		Time.zone = tz
@@ -40,14 +42,14 @@ class Location < ActiveRecord::Base
 				if name != rss_ts.strftime('%A')
 					logger.info "First item in todays - #{rss_ts} - feed covers the day after. Skipping. #{rss.items[0].title}"
 					return
-				else
-					name = 'briefly' # we don't want weekday in db
-				end
+        end
+				name = 'briefly' # we don't want weekday in db
+        ss = SampleSummary.new(:rss_ts => rss_ts.to_datetime, :location => self).save
 			end
 
 			val.gsub!(/.*?(\d+).*/, '\1') # leave only celcius temperature value
 
-			s = Sample.new(:name => name, :value => val, :rss_ts => rss_ts.to_datetime, :location => self).save
+			s = Sample.new(:name => name, :value => val, :sample_summary => ss).save
 
 			logger.info "Sample taken: #{s.inspect}"
 		end
@@ -55,7 +57,7 @@ class Location < ActiveRecord::Base
 
 	def already_sampled?(date)
 		logger.info "Is #{name} already sampled for #{date}?"
-		if samples.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
+		if sample_summaries.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
       logger.info "Yes"
       return true
     else

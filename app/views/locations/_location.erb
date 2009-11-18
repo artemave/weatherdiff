@@ -1,8 +1,8 @@
 <tr class="<%= cycle :even, :odd %>">
 	<td><%=h location.name %></td>
 	<td><%=h location.tz %></td>
-	<td><%=h location.samples.maximum('created_at') %></td>
-	<td><%=h location.samples.count(:rss_ts, :distinct => true) %></td>
+	<td><%=h location.sample_summaries.maximum('rss_ts') %></td>
+	<td><%=h location.sample_summaries.count(:all) %></td>
 	<td><%= link_to 'Show', location_path(location) %></td>
 	<td><%= link_to 'Edit', edit_location_path(location) %></td>
 	<td><%= link_to 'Destroy', location, :confirm => 'Are you sure?', :method => :delete %></td>

@@ -6,4 +6,19 @@ class SampleSummary < ActiveRecord::Base
   validates_uniqueness_of :location_id, :scope => :rss_ts
 
   default_scope :include => :samples
+
+  def briefly
+    s = samples.detect {|s| s.name == 'briefly' }
+    s and s.value
+  end
+
+  def max_temp
+    s = samples.detect {|s| s.name == 'Max Temp' }
+    s and s.value
+  end
+
+  def min_temp
+    s = samples.detect {|s| s.name == 'Min Temp' }
+    s and s.value
+  end
 end

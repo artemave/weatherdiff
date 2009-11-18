@@ -1,14 +1,6 @@
 <tr class="<%= cycle :odd, :even %>">
-  <%
-    data = {}
-    ss.samples.each do |s|
-      data['briefly'] = s.value if s.name == 'briefly'
-      data['Max Temp'] = s.value if s.name == 'Max Temp'
-      data['Min Temp'] = s.value if s.name == 'Min Temp'
-    end
-  -%>
   <td><%= ss.rss_ts %></td>
-	<td><%=h data['briefly'] %></td>
-	<td><%=h data['Max Temp'] %></td>
-	<td><%=h data['Min Temp'] %></td>
+	<td><%=h ss.briefly %></td>
+	<td><%=h ss.max_temp %></td>
+	<td><%=h ss.min_temp %></td>
 </tr>

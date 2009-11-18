@@ -30,6 +30,7 @@ class Location < ActiveRecord::Base
 			return
 		end
 
+    ss = nil
 		rss.items[0].title.split(',').each_with_index do |ri, i|
 			ri =~ /^\s*([^:]+)\s*:\s*(.*)\s*$/
 			name, val = $1, $2
@@ -44,12 +45,12 @@ class Location < ActiveRecord::Base
 					return
         end
 				name = 'briefly' # we don't want weekday in db
-        ss = SampleSummary.new(:rss_ts => rss_ts.to_datetime, :location => self).save
+        ss = SampleSummary.create(:rss_ts => rss_ts.to_datetime, :location => self)
 			end
 
 			val.gsub!(/.*?(\d+).*/, '\1') # leave only celcius temperature value
 
-			s = Sample.new(:name => name, :value => val, :sample_summary => ss).save
+			s = Sample.create(:name => name, :value => val, :sample_summary => ss)
 
 			logger.info "Sample taken: #{s.inspect}"
 		end

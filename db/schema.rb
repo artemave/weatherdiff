@@ -32,7 +32,8 @@ ActiveRecord::Schema.define(:version => 20091116220239) do
     t.string   "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "location_id", :null => false
+    t.integer  "location_id"
+    t.integer  "sample_summary_id"
   end
 
   add_index "samples", ["location_id"], :name => "fk_sample_location"

@@ -7,6 +7,9 @@ class SampleSummary < ActiveRecord::Base
 
   default_scope :include => :samples
 
+  cattr_reader :per_page
+  @@per_page = 20
+
   def briefly
     s = samples.detect {|s| s.name == 'briefly' }
     s and s.value

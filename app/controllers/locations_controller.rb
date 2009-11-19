@@ -14,6 +14,7 @@ class LocationsController < ApplicationController
   # GET /locations/1.xml
   def show
     @location = Location.with_samples.find(params[:id])
+    @sample_summaries = @location.sample_summaries.paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # show.html.erb

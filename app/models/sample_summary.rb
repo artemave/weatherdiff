@@ -5,7 +5,7 @@ class SampleSummary < ActiveRecord::Base
 	validates_associated :location
   validates_uniqueness_of :location_id, :scope => :rss_ts
 
-  default_scope :include => :samples
+  default_scope :include => :samples, :order => 'rss_ts desc'
 
   cattr_reader :per_page
   @@per_page = 20

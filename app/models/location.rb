@@ -48,7 +48,7 @@ class Location < ActiveRecord::Base
         ss = SampleSummary.create(:rss_ts => rss_ts.to_datetime, :location => self)
 			end
 
-			val.gsub!(/.*?(\d+).*/, '\1') # leave only celcius temperature value
+			val.gsub!(/.*?(-?\d+).*/, '\1') # leave only celcius temperature value
 
 			s = Sample.create(:name => name, :value => val, :sample_summary => ss)
 

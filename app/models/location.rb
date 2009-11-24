@@ -1,6 +1,5 @@
 require 'rss/2.0'
 require 'open-uri'
-require 'facets/hash'
 
 class Location < ActiveRecord::Base
 	has_many :sample_summaries
@@ -10,8 +9,7 @@ class Location < ActiveRecord::Base
   named_scope :with_samples, :include => :sample_summaries
 
 	def sample
-		Time.zone = tz
-		today = Date.today
+		today = Time.now.in_time_zone(tz).to_date
 
 		return if already_sampled?(today)
 
@@ -65,19 +63,5 @@ class Location < ActiveRecord::Base
       logger.info "No"
       return false
     end
-	end
-
-	def formatted_samples
-		fmt_samples = Hash.autonew
-		samples.to_a.each do |s|
-			fmt_samples[s.rss_ts.to_s][s.name] = s.value
-			fmt_samples[s.rss_ts.to_s][:date] = s.rss_ts.to_s
-		end
-
-		result = []
-		fmt_samples.keys.sort {|a,b| b <=> a }.each do |k|
-			result << fmt_samples[k]
-		end
-		result
 	end
 end

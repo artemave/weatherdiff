@@ -28,7 +28,6 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
 	config.gem 'capistrano', :version => '2.5.5'
-	config.gem 'facets', :lib => false
   config.gem 'chronic', :lib => false, :version => '0.2.3' #javan-whenever dependency
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
   config.gem 'will_paginate'
@@ -80,3 +79,31 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
 	#config.active_record.observers = :user_observer
 end
+
+module ActiveSupport
+  class BufferedLogger
+    def add(severity, message = nil, progname = nil, &block)
+      return if @level > severity
+      message = (message || (block && block.call) || progname).to_s
+
+      level = {
+        0 => "DEBUG",
+        1 => "INFO",
+        2 => "WARN",
+        3 => "ERROR",
+        4 => "FATAL"
+      }[severity] || "U"
+
+      message = "%s #%d %s: %s" % [Time.now.strftime("%b-%d %H:%M:%S"),
+                                  $$,
+                                  level,
+                                  message]
+
+      message = "#{message}\n" unless message[-1] == ?\n
+      buffer << message
+      auto_flush
+      message
+    end
+  end
+end
+

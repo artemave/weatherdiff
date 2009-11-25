@@ -5,6 +5,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
 
   map.resource :session
+  map.resource :report, :controller => 'report'
 
   map.resources :locations
 

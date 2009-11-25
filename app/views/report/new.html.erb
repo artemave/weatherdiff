@@ -1,0 +1,4 @@
+<h1 class="ui-widget-header">Report#new</h1>
+<% remote_form_for @report do |f| -%>
+  Compare <%= f.text_field :location1, :class => 'ui-widget' %> and <%= f.text_field :location2, :class => 'ui-widget' %>
+<% end -%>

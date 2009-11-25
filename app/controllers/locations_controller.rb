@@ -1,12 +1,24 @@
 class LocationsController < ApplicationController
   # GET /locations
   # GET /locations.xml
+	before_filter { |c|
+    # XXX nonsecure backdoor for jquery autocomplete
+	  c.send(:authenticate) unless c.params[:format] == 'json' and c.action_name == 'index'
+	}
+
   def index
-    @locations = Location.find(:all)
+    if params[:q] and params[:limit] # from jquery autocomplete plugin
+      @locations = Location.find(:all, :conditions => ["name like '%?%'", params[:q]], :limit => params[:limit])
+    else
+      @locations = Location.find(:all)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @locations }
+      format.json {
+        render => @locations.collect {|l| {:location => {:id => l.id, :name => l.name}} }.to_json
+      }
     end
   end
 

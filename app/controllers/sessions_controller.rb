@@ -2,7 +2,6 @@
 class SessionsController < ApplicationController
 
 	layout 'locations'
-	skip_before_filter :authenticate
 
   # render new.rhtml
   def new

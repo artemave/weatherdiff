@@ -7,17 +7,14 @@ class LocationsController < ApplicationController
 	}
 
   def index
-    if params[:q] and params[:limit] # from jquery autocomplete plugin
-      @locations = Location.find(:all, :conditions => ["name like '%?%'", params[:q]], :limit => params[:limit])
-    else
-      @locations = Location.find(:all)
-    end
+    @locations = Location.find(:all)
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @locations }
-      format.json {
-        render => @locations.collect {|l| {:location => {:id => l.id, :name => l.name}} }.to_json
+      format.js {
+        @locations = Location.find(:all, :conditions => ["name like ?", %{%#{params[:q]}%}], :limit => params[:limit])
+        render :text => @locations.map(&:name).join("\n")
       }
     end
   end

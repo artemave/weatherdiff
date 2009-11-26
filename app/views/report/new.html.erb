@@ -1,4 +1,10 @@
 <h1 class="ui-widget-header">Report#new</h1>
-<% remote_form_for @report do |f| -%>
+<% remote_form_for(@report, :url => new_report_path) do |f| -%>
   Compare <%= f.text_field :location1, :class => 'ui-widget' %> and <%= f.text_field :location2, :class => 'ui-widget' %>
 <% end -%>
+
+<script type="text/javascript">
+  $(function () {
+      $('input.ui-widget').autocomplete(<%= %{'#{locations_path}'} %>)
+  })
+</script>

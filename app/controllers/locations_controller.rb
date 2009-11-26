@@ -3,7 +3,7 @@ class LocationsController < ApplicationController
   # GET /locations.xml
 	before_filter { |c|
     # XXX nonsecure backdoor for jquery autocomplete
-	  c.send(:authenticate) unless c.params[:format] == 'json' and c.action_name == 'index'
+	  c.send(:authenticate) unless c.request.format.js? and c.action_name == 'index'
 	}
 
   def index
@@ -13,7 +13,8 @@ class LocationsController < ApplicationController
       format.html # index.html.erb
       format.xml  { render :xml => @locations }
       format.js {
-        @locations = Location.find(:all, :conditions => ["name like ?", %{%#{params[:q]}%}], :limit => params[:limit])
+        # q and limit are coming from by jQuery autocomplete plugin
+        @locations = Location.find(:all, :conditions => ["name like ?", "%#{params[:q]}%"], :limit => params[:limit])
         render :text => @locations.map(&:name).join("\n")
       }
     end

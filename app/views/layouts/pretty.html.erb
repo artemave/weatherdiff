@@ -6,7 +6,17 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>Weatherdiff</title>
   <%= stylesheet_link_tag 'themes/jquery-ui-1.7.2.custom', 'pretty', 'jquery.autocomplete' %>
-  <%= javascript_include_tag 'jquery-1.3.2.min', 'jquery.json-2.2.min','jquery-ui-1.7.2.custom.min', 'jrails', 'jquery.ajaxQueue', 'jquery.bgiframe.min', 'jquery.autocomplete.pack' %>
+  <!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+  <%= javascript_include_tag %w{
+      jquery-1.3.2.min
+      jquery.json-2.2.min
+      jquery-ui-1.7.2.custom.min
+      jrails jquery.ajaxQueue
+      jquery.bgiframe.min
+      jquery.autocomplete.pack
+      jquery.flot
+    }
+  %>
 </head>
 <body>
 

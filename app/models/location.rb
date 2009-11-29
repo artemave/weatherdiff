@@ -3,10 +3,11 @@ require 'open-uri'
 
 class Location < ActiveRecord::Base
 	has_many :sample_summaries
+  has_many :samples, :through => :sample_summaries # that is for named_scope to get all the data in few queries
 	validates_presence_of :name, :feed, :tz
 	validates_uniqueness_of :name, :feed
 
-  named_scope :with_samples, :include => :sample_summaries
+  named_scope :with_samples, :include => [:sample_summaries, :samples]
 
 	def sample
 		today = Time.now.in_time_zone(tz).to_date

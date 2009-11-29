@@ -7,7 +7,7 @@ class ReportController < ApplicationController
 
   def create
     @report = Report.new(params[:report])
-    @report.generate! #TODO error handling
+    @report.generate_flot #TODO error handling
     
     respond_to do |format|
       format.js

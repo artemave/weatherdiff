@@ -1,1 +1,4 @@
 page.select('input.ui-widget').val('')
+page << %{
+  $.plot($('#graph'), #{@report.flot[:series].to_json}, #{@report.flot[:options].to_json})
+}

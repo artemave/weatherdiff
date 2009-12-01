@@ -1,4 +1,36 @@
 page.select('input.ui-widget').val('')
 page << %{
-  $.plot($('#graph'), #{@report.flot[:series].to_json}, #{@report.flot[:options].to_json})
+  var sen_sel = $('#sensor_selector');
+  if (!sen_sel.get(0))  {
+    sen_sel = $('<select id="sensor_selector">');
+    $.each(#{@report.flot[:sensors].to_json}, function(i, val) {
+      sen_sel.append($('<option value='+val+'>'+val+'</option>'))
+    });
+    $('#sensor_sel_container').append(sen_sel);
+  }
+
+  function plotAsSelected() {
+    var selected_sensor = sen_sel.val();
+    var data = #{@report.flot[:data].to_json};
+    var series = [];
+    var options = {
+      xaxis: { mode: 'time' }
+    };
+
+    for (loc in data)  {
+      for (sensor_type in data[loc]) {
+        if (sensor_type == selected_sensor) {
+          series.push({
+            data: data[loc][sensor_type],
+            label: loc
+          });
+        }
+      }
+    }
+    $.plot($('#graph'), series, options);
+  }
+
+  plotAsSelected();
+
+  sen_sel.change(function() {plotAsSelected()});
 }

@@ -7,34 +7,21 @@ class Report
   def initialize(params = {})
     @location1 = params[:location1]
     @location2 = params[:location2]
-    @flot = Hash.autonew
+    @flot = {}
   end
 
-  def generate_flot
+  def generate_flot_data
     ls = Location.with_samples.find(:all, :conditions => ['name in (?,?)', location1, location2]);
-    color = 1
-    @flot[:series] = []
+    @flot[:data] = Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = [] } }
     ls.each do |loc|
       for ss in loc.sample_summaries
-        ts = Time.gm(ss.rss_ts.year, ss.rss_ts.month, ss.rss_ts.day).to_i * 1000
-        (max_temp_data ||= []) << [ts, ss.max_temp]
-        (min_temp_data ||= []) << [ts, ss.min_temp]
+        ts = Time.gm(ss.rss_ts.year, ss.rss_ts.month, ss.rss_ts.day).to_i * 1000 # flot likes miliseconds
+        @flot[:data][loc.name][:max_temp] << [ts, ss.max_temp]
+        @flot[:data][loc.name][:min_temp] << [ts, ss.min_temp]
+        @flot[:data][loc.name][:briefly] << [ts, ss.briefly]
       end
-
-      @flot[:series] << {
-        :color => color,
-        :label => loc.name,
-        :data => max_temp_data
-      } << {
-        :color => color,
-        :shadowSize => 5,
-        :data => min_temp_data
-      }
-
-      color+= 1
     end
-
-    @flot[:options][:xaxis][:mode] = 'time'
+    @flot[:sensors] = [:max_temp, :min_temp]
   end
 
   # a secret kick for restful routes to work

@@ -10,16 +10,27 @@ class Report
 
   def generate_flot_data
     ls = Location.with_samples.find(:all, :conditions => ['name in (?,?)', location1, location2]);
+    max_y, min_y = nil, nil
     @flot[:data] = Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = [] } }
     ls.each do |loc|
       for ss in loc.sample_summaries
         ts = Time.gm(ss.rss_ts.year, ss.rss_ts.month, ss.rss_ts.day).to_i * 1000 # flot likes miliseconds
+        
         @flot[:data][loc.name][:max_temp] << [ts, ss.max_temp]
+        max_y = ss.max_temp.to_i unless max_y and max_y > ss.max_temp.to_i
+
         @flot[:data][loc.name][:min_temp] << [ts, ss.min_temp]
+        min_y = ss.min_temp.to_i unless min_y and min_y < ss.min_temp.to_i
+        
         @flot[:data][loc.name][:briefly] << [ts, ss.briefly]
       end
     end
-    @flot[:sensors] = [:max_temp, :min_temp]
+    min_y -= 5
+    max_y += 5
+    @flot[:sensors] = [
+      {:key => :max_temp, :name => 'Maximum temperature', :min_y => min_y, :max_y => max_y },
+      {:key => :min_temp, :name => 'Minimum temperature', :min_y => min_y, :max_y => max_y },
+    ]
   end
 
   # a secret kick for restful routes to work

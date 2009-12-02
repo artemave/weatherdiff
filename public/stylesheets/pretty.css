@@ -2,3 +2,8 @@ body {
   font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
   font-size: 1em;
 }
+
+.flot-graph {
+  width: 800px;
+  height: 400px;
+}

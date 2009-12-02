@@ -2,23 +2,24 @@
 <% remote_form_for(@report, :url => report_path) do |f| -%>
   Compare <%= f.text_field :location1, :class => 'ui-widget' %> and <%= f.text_field :location2, :class => 'ui-widget' %>
 <% end -%>
-
-<div id="sensor_sel_container"></div>
-<div id="graph" style="width:800px;height:400px;"></div>
+<br/>
+<div id="sensor_sel_tabs"></div>
 
 <script type="text/javascript">
   $(function () {
-      $('input.ui-widget')
-        .autocomplete(<%= "'#{locations_path}'" %>)
-        .result(function () {
-          var ready_to_go = true
-          $('input.ui-widget').each(function () {
-            if (!$(this).val())
-              ready_to_go = false
-          })
-          if (ready_to_go)
-            //workaround to http://stackoverflow.com/questions/645555/should-jquerys-form-submit-not-trigger-onsubmit-within-the-form-tag
-            $('form.new_report').get(0).onsubmit()
-        })
-  })
+    $('input.ui-widget')
+      .autocomplete(<%= "'#{locations_path}'" %>)
+      .result(function () {
+        var ready_to_go = true;
+        $('input.ui-widget').each(function () {
+          if (!$(this).val()) {
+            ready_to_go = false;
+          }
+        });
+        if (ready_to_go)  {
+          //workaround to http://stackoverflow.com/questions/645555/should-jquerys-form-submit-not-trigger-onsubmit-within-the-form-tag
+          $('form.new_report').get(0).onsubmit();
+        }
+      });
+  });
 </script>

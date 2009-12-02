@@ -1,35 +1,39 @@
-$('input.ui-widget').val('');
-
-var sen_sel = $('#sensor_selector');
-if (!sen_sel.get(0))  {
-  sen_sel = $('<select id="sensor_selector">');
-  $.each(<%= @report.flot[:sensors].to_json %>, function(i, val) {
-    sen_sel.append($('<option value='+val+'>'+val+'</option>'))
-  });
-  $('#sensor_sel_container').append(sen_sel);
-}
-
 function plotAsSelected() {
-  var selected_sensor = sen_sel.val();
+  var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected');
   var data = <%= @report.flot[:data].to_json %>;
-  var series = [];
-  var options = {
-    xaxis: { mode: 'time' }
-  };
 
+  var series = [];
   for (loc in data)  {
-    for (sensor_type in data[loc]) {
-      if (sensor_type == selected_sensor) {
+    for (var i = 0; i < sensors.length; i++) {
+      if (i == tab_idx) {
         series.push({
-          data: data[loc][sensor_type],
+          data: data[loc][sensors[i]],
           label: loc
         });
       }
     }
   }
-  $.plot($('#graph'), series, options);
+  $.plot($('#graph'+tab_idx), series, { xaxis: { mode: 'time' }});
+}
+
+$('input.ui-widget').val('');
+
+var sen_sel = $('#sensor_sel_tabs');
+var sensors = <%= @report.flot[:sensors].to_json %>;
+
+if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initialized
+  sen_sel.prepend('<ul></ul>').tabs();
+
+  $.each(sensors, function(i, val) {
+      var graph = $('<div id="graph'+i+'" class="flot-graph"/>');
+      var graph_w = parseInt( /\d+/.exec(graph.css('width')) );
+      var graph_h = parseInt( /\d+/.exec(graph.css('height')) );
+      var graph_container = $('<div id="graph_cont'+i+'" style="width: '+ (graph_w + 30) +'px; height: '+ (graph_h + 20) +'px;"/>');
+      graph_container.append(graph);
+      sen_sel.append(graph_container).tabs('add', '#graph_cont'+i, val);;
+  });
+  sen_sel.bind('tabsshow', function() {plotAsSelected()});
+  sen_sel.tabs('select', 0);
 }
 
 plotAsSelected();
-
-sen_sel.change(function() {plotAsSelected()});

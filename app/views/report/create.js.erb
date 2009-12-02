@@ -11,7 +11,8 @@ function plotAsSelected() {
   }
   var opts = {
     xaxis: { mode: 'time' },
-    yaxis: { min: sensors[tab_idx].min_y, max: sensors[tab_idx].max_y }
+    yaxis: { min: sensors[tab_idx].min_y, max: sensors[tab_idx].max_y },
+    grid: { color: $('.ui-widget-header').css('background-color') }
   };
   $.plot($('#graph'+tab_idx), series, opts);
 }

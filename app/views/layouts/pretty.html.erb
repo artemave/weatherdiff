@@ -19,11 +19,10 @@
   %>
 </head>
 <body>
-
-<p style="color: green"><%= flash[:notice] %></p>
-<p style="color: red"><%= flash[:error] %></p>
-
-<%= yield  %>
-
+  <div id="wrapper">
+    <p style="color: green"><%= flash[:notice] %></p>
+    <p style="color: red"><%= flash[:error] %></p>
+    <%= yield  %>
+  </div>
 </body>
 </html>

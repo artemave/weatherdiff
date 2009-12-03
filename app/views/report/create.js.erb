@@ -19,6 +19,8 @@ function plotAsSelected() {
 
 $('input.ui-widget').val('');
 
+$('#loading').hide();
+
 var sen_sel = $('#sensor_sel_tabs');
 var sensors = <%= @report.flot[:sensors].to_json %>;
 

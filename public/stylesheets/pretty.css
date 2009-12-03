@@ -13,3 +13,22 @@ body {
   position: relative;
   width: 956px;
 }
+
+.search-form-table {
+  height: 60px;
+  display: table;
+  #position: relative;
+  overflow: hidden;
+}
+
+.search-form-cell {
+  #position: absolute;
+  #top: 50%;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.search-form-content {
+  #position: relative;
+  #top: -50%;
+}

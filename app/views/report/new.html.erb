@@ -1,6 +1,17 @@
 <h1 class="ui-widget-header">Report#new</h1>
 <% remote_form_for(@report, :url => report_path) do |f| -%>
-  Compare <%= f.text_field :location1, :class => 'ui-widget' %> and <%= f.text_field :location2, :class => 'ui-widget' %>
+  <div class="search-form-table">
+    <div class="search-form-cell">
+      <div class="search-form-content">
+        Compare <%= f.text_field :location1, :class => 'ui-widget' %> and <%= f.text_field :location2, :class => 'ui-widget' %>
+      </div>
+    </div>
+    <div class="search-form-cell">
+      <div id="loading" class="search-form-content" style="display: none;">
+        &nbsp;&nbsp;<img src="/images/ajax-loader.gif"/>
+      </div>
+    </div>
+  </div>
 <% end -%>
 <br/>
 <div id="sensor_sel_tabs"></div>
@@ -17,6 +28,7 @@
           }
         });
         if (ready_to_go)  {
+          $('#loading').show();
           //workaround to http://stackoverflow.com/questions/645555/should-jquerys-form-submit-not-trigger-onsubmit-within-the-form-tag
           $('form.new_report').get(0).onsubmit();
         }

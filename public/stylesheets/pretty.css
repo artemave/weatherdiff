@@ -32,3 +32,11 @@ body {
   #position: relative;
   #top: -50%;
 }
+
+input.search-form {
+  border:1px solid #5C9CCC;
+  /*font-size:150%;*/
+  padding: 0.2em 0;
+  margin-top:0.1em;
+  width:14em;
+}

@@ -10,9 +10,24 @@ function plotAsSelected() {
     });
   }
   var opts = {
-    xaxis: { mode: 'time' },
-    yaxis: { min: sensors[tab_idx].min_y, max: sensors[tab_idx].max_y },
-    grid: { color: $('.ui-widget-header').css('background-color') }
+    xaxis: {
+      mode: 'time',
+      zoomRange: <%= @report.flot[:zoom_range].to_json %>,
+      panRange: <%= @report.flot[:pan_range].to_json %>
+    },
+    yaxis: {
+      min: sensors[tab_idx].min_y,
+      max: sensors[tab_idx].max_y,
+      zoomRange: [sensors[tab_idx].max_y - sensors[tab_idx].min_y, sensors[tab_idx].max_y - sensors[tab_idx].min_y],
+      panRange: [sensors[tab_idx].min_y, sensors[tab_idx].max_y]
+    },
+    grid: { color: $('.ui-widget-header').css('background-color') },
+    zoom: {
+      interactive: true
+    },
+    pan: {
+      interactive: true
+    }
   };
   $.plot($('#graph'+tab_idx), series, opts);
 }

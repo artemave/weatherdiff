@@ -33,7 +33,7 @@
 }
 
 .ac_loading {
-	background: white url('indicator.gif') right center no-repeat;
+	background: white url('/images/ajax-loader-small.gif') right center no-repeat;
 }
 
 .ac_odd {

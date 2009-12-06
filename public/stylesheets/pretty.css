@@ -1,6 +1,7 @@
 body {
   font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
   font-size: 1em;
+  margin: 0;
 }
 
 .flot-graph {
@@ -8,10 +9,23 @@ body {
   height: 400px;
 }
 
-#wrapper {
-  margin: 0 auto;
+#header {
+  border-bottom:2px solid #DDDDDD;
+  height:115px;
+  margin:0;
+  background: #ddd;
+}
+
+#logo {
+  padding:15px 115px;
+}
+
+#content {
+  margin: -60px auto;
   position: relative;
   width: 956px;
+  background: #fff;
+  padding: 1em;
 }
 
 .search-form-table {

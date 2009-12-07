@@ -10,7 +10,7 @@ class Report
 
   def generate_flot_data
     ls = Location.with_samples.find(:all, :conditions => ['name in (?,?)', location1, location2]);
-    max_y, min_y, min_ts, max_ts = nil, nil, nil, nil
+    max_y, min_y, min_ts, max_ts = {}, {}, nil
     @flot[:data] = Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = [] } }
     ls.each do |loc|
       for ss in loc.sample_summaries
@@ -19,19 +19,24 @@ class Report
         min_ts = ts unless min_ts and min_ts < ts
         
         @flot[:data][loc.name][:max_temp] << [ts, ss.max_temp]
-        max_y = ss.max_temp.to_i unless max_y and max_y > ss.max_temp.to_i
+        max_y[:t] = ss.max_temp.to_i unless max_y[:t] and max_y[:t] > ss.max_temp.to_i
 
         @flot[:data][loc.name][:min_temp] << [ts, ss.min_temp]
-        min_y = ss.min_temp.to_i unless min_y and min_y < ss.min_temp.to_i
+        min_y[:t] = ss.min_temp.to_i unless min_y[:t] and min_y[:t] < ss.min_temp.to_i
         
-        @flot[:data][loc.name][:briefly] << [ts, ss.briefly]
+        @flot[:data][loc.name][:briefly] << [ts, ss.briefly.flotify]
       end
     end
-    min_y -= 5
-    max_y += 5
+    
+    min_y[:t] -= 5
+    max_y[:t] += 5
+    min_y[:overview] = SampleSummary::TO_FLOT.values.min - 1
+    max_y[:overview] = SampleSummary::TO_FLOT.values.max + 1
+
     @flot[:sensors] = [
-      {:key => :max_temp, :name => 'Maximum temperature', :min_y => min_y, :max_y => max_y },
-      {:key => :min_temp, :name => 'Minimum temperature', :min_y => min_y, :max_y => max_y },
+      {:key => :briefly, :name => 'Overview', :min_y => min_y[:overview], :max_y => max_y[:overview] },
+      {:key => :max_temp, :name => 'Maximum temperature', :min_y => min_y[:t], :max_y => max_y[:t] },
+      {:key => :min_temp, :name => 'Minimum temperature', :min_y => min_y[:t], :max_y => max_y[:t] },
     ]
 
     @flot[:zoom_range] = [1000 * 60 * 60 * 24 * 7, max_ts - min_ts]; # week to max period

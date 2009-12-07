@@ -1,12 +1,36 @@
-function showTooltip(x, y, contents) {
-  $('<div id="tooltip">' + contents + '</div>').css( {
-    position: 'absolute',
-    display: 'none',
-    top: y + 15,
-    left: x + 15,
-    opacity: 0.80
-  }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
-}
+$.fn.extend({
+  with_tooltips: function () {
+
+    function showTooltip(x, y, contents) {
+      $('<div id="tooltip">' + contents + '</div>').css( {
+        position: 'absolute',
+        display: 'none',
+        top: y + 15,
+        left: x + 15,
+        opacity: 0.80
+      }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
+    }
+
+    var previousPoint = null;
+    this.bind("plothover", function (event, pos, item) {
+      var tooltip = $('#tooltip');
+      if (item) {
+        if (previousPoint != item.datapoint) {
+          previousPoint = item.datapoint;
+          
+          tooltip.remove();
+
+          var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
+          showTooltip(item.pageX, item.pageY, label);
+        }
+      }
+      else {
+        tooltip.remove();
+        previousPoint = null;            
+      }
+    });
+  }
+});
 
 function plotAsSelected() {
   var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected');
@@ -19,6 +43,7 @@ function plotAsSelected() {
       label: loc
     });
   }
+
   var opts = {
     xaxis: {
       mode: 'time',
@@ -31,7 +56,10 @@ function plotAsSelected() {
       zoomRange: [sensors[tab_idx].max_y - sensors[tab_idx].min_y, sensors[tab_idx].max_y - sensors[tab_idx].min_y],
       panRange: [sensors[tab_idx].min_y, sensors[tab_idx].max_y]
     },
-    grid: { color: $('.ui-widget-header').css('background-color'), hoverable: true },
+    grid: {
+      color: $('.ui-widget-header').css('background-color'),
+      hoverable: true
+    },
     zoom: {
       interactive: true
     },
@@ -43,28 +71,10 @@ function plotAsSelected() {
       points: {show: true, radius: 2}
     }
   };
-  $.plot($('#graph'+tab_idx), series, opts);
-
-  var previousPoint = null;
-  $('#graph'+tab_idx).bind("plothover", function (event, pos, item) {
-    if (item) {
-      if (previousPoint != item.datapoint) {
-        previousPoint = item.datapoint;
-        
-        $("#tooltip").remove();
-
-        var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
-        showTooltip(item.pageX, item.pageY, label);
-      }
-    }
-    else {
-      $("#tooltip").remove();
-      previousPoint = null;            
-    }
-  });
+  var graph = $('#graph'+tab_idx);
+  $.plot(graph, series, opts);
+  graph.with_tooltips();
 }
-
-$('#loading').hide();
 
 var sen_sel = $('#sensor_sel_tabs');
 var sensors = <%= @report.flot[:sensors].to_json %>;
@@ -86,4 +96,5 @@ if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initial
 
 plotAsSelected();
 
+$('#loading').hide();
 $('input.ui-widget').val('');

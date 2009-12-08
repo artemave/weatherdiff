@@ -43,7 +43,7 @@ class Location < ActiveRecord::Base
 					logger.info "First item in todays - #{rss_ts} - feed covers the day after. Skipping. #{rss.items[0].title}"
 					return
         end
-				name = 'briefly' # we don't want weekday in db
+				name = 'overview' # we don't want weekday in db
         ss = SampleSummary.create(:rss_ts => rss_ts.to_datetime, :location => self)
 			end
 

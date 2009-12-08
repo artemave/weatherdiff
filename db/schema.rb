@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091116220239) do
+ActiveRecord::Schema.define(:version => 20091208120406) do
 
   create_table "locations", :force => true do |t|
     t.string   "feed"

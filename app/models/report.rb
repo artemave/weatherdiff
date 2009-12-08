@@ -24,7 +24,7 @@ class Report
         @flot[:data][loc.name][:min_temp] << [ts, ss.min_temp]
         min_y[:t] = ss.min_temp.to_i unless min_y[:t] and min_y[:t] < ss.min_temp.to_i
         
-        @flot[:data][loc.name][:briefly] << [ts, ss.briefly.flotify]
+        @flot[:data][loc.name][:overview] << [ts, ss.overview.flotify]
       end
     end
     
@@ -34,7 +34,7 @@ class Report
     max_y[:overview] = SampleSummary::TO_FLOT.values.max + 1
 
     @flot[:sensors] = [
-      {:key => :briefly, :name => 'Overview', :min_y => min_y[:overview], :max_y => max_y[:overview] },
+      {:key => :overview, :name => 'Overview', :min_y => min_y[:overview], :max_y => max_y[:overview] },
       {:key => :max_temp, :name => 'Maximum temperature', :min_y => min_y[:t], :max_y => max_y[:t] },
       {:key => :min_temp, :name => 'Minimum temperature', :min_y => min_y[:t], :max_y => max_y[:t] },
     ]

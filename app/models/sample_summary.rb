@@ -30,15 +30,16 @@ class SampleSummary < ActiveRecord::Base
     'foggy'               => 3.02,
   }
 
-  def briefly
-    s = samples.detect {|s| s.name == 'briefly' }
-    return unless s
+  def overview
+    s = samples.detect {|s| s.name == 'overview' } or return
+
     val = s.value
-    class << val
+    val.instance_eval do
       def flotify
         TO_FLOT["#{self}"]
       end
     end
+
     return val
   end
 

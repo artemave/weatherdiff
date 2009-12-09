@@ -32,8 +32,10 @@ $.fn.extend({
 });
 
 function plotAsSelected() {
-  var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected');
-  var data = <%= @report.flot[:data].to_json %>;
+  var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected'),
+      graph = $('#graph'+tab_idx),
+      data = <%= @report.flot[:data].to_json %>,
+      sensors = <%= @report.flot[:sensors].to_json %>;
 
   var series = [];
   for (loc in data)  {
@@ -66,17 +68,37 @@ function plotAsSelected() {
       interactive: true
     },
     series: {
-      lines: {show: true},
-      points: {show: true, radius: 2}
+      lines: {show: true}
     }
   };
-  var graph = $('#graph'+tab_idx);
-  $.plot(graph, series, opts);
+
+  global_plot = $.plot(graph, series, opts);
   graph.with_tooltips();
+  graph.bind('plotzoom', function(e, plot) {
+      $.extend(true, plot.getOptions(), pointsOpts(plot));
+      plot.setData(series);
+      plot.setupGrid();
+      plot.draw();//XXX TRAX PAX HAX. Have to draw it again (right after draw() in zoom)
+  });
+
+  function pointsOpts(plot) {
+    var opts = {show: false},
+        xaxis_range = plot.getOptions().xaxis.max - plot.getOptions().xaxis.min,
+        month = 1000*60*60*24*30;
+
+    if (xaxis_range < 3*month && xaxis_range > month) {
+      opts = {show: true, radius: 2};
+    }
+    else if (xaxis_range < month)  {
+      opts = {show: true, radius: 3};
+    }
+    return {series: {points: opts}};
+  }
 }
 
 var sen_sel = $('#sensor_sel_tabs');
 var sensors = <%= @report.flot[:sensors].to_json %>;
+global_plot = null; //FIXME this is for accessing plot from firebug console. Remove after development is complete
 
 if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initialized
   sen_sel.prepend('<ul></ul>').tabs();

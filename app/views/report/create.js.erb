@@ -62,7 +62,8 @@ function plotAsSelected() {
       hoverable: true
     },
     zoom: {
-      interactive: true
+      interactive: true,
+      beforeDraw: handleDynamicZoom
     },
     pan: {
       interactive: true
@@ -74,25 +75,28 @@ function plotAsSelected() {
 
   global_plot = $.plot(graph, series, opts);
   graph.with_tooltips();
-  graph.bind('plotzoom', function(e, plot) {
-      $.extend(true, plot.getOptions(), pointsOpts(plot));
-      plot.setData(series);
-      plot.setupGrid();
-      plot.draw();//XXX TRAX PAX HAX. Have to draw it again (right after draw() in zoom)
-  });
 
-  function pointsOpts(plot) {
-    var opts = {show: false},
-        xaxis_range = plot.getOptions().xaxis.max - plot.getOptions().xaxis.min,
-        month = 1000*60*60*24*30;
+  function handleDynamicZoom() {
+    $.extend(true, this.getOptions(), calculatePointsOpts(this));
+    this.setData(series);
+    this.setupGrid();
+    //now I've got access to axis values,
+    //next is to summarise data per x-tick
+    //and show it in bars
 
-    if (xaxis_range < 3*month && xaxis_range > month) {
-      opts = {show: true, radius: 2};
+    function calculatePointsOpts(plot) {
+      var opts = {show: false},
+          xaxis_range = plot.getOptions().xaxis.max - plot.getOptions().xaxis.min,
+          month = 1000*60*60*24*30;
+
+      if (xaxis_range < 3*month && xaxis_range > month) {
+        opts = {show: true, radius: 2};
+      }
+      else if (xaxis_range < month)  {
+        opts = {show: true, radius: 3};
+      }
+      return {series: {points: opts}};
     }
-    else if (xaxis_range < month)  {
-      opts = {show: true, radius: 3};
-    }
-    return {series: {points: opts}};
   }
 }
 

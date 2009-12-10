@@ -64,7 +64,8 @@ function plotAsSelected() {
       $.each(series, function(i, s) {
           new_series[i] = {
             label: s.label,
-            data: []
+            data: [],
+            bars: {align: i == 0 ? 'center' : 'left'}
           };
           $.each(ticks, function(j, v) {
               var prev_tick = ticks[j-1];
@@ -99,6 +100,7 @@ function plotAsSelected() {
       if (overview) {
         if (xaxis_range > month) {
           bars.show = true;
+          bars.barWidth = xaxis_range/30;
         }
         else  {
           lines.show = true;

@@ -1,41 +1,7 @@
-$.fn.extend({
-  with_tooltips: function () {
-    function showTooltip(x, y, contents) {
-      $('<div id="tooltip">' + contents + '</div>').css( {
-        position: 'absolute',
-        display: 'none',
-        top: y + 15,
-        left: x + 15,
-        opacity: 0.80
-      }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
-    }
-
-    var previousPoint = null;
-    this.bind("plothover", function (event, pos, item) {
-      var tooltip = $('#tooltip');
-      if (item) {
-        if (previousPoint != item.datapoint) {
-          previousPoint = item.datapoint;
-          
-          tooltip.remove();
-
-          var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
-          showTooltip(item.pageX, item.pageY, label);
-        }
-      }
-      else {
-        tooltip.remove();
-        previousPoint = null;            
-      }
-    });
-  }
-});
-
 function plotAsSelected() {
   var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected'),
       graph = $('#graph'+tab_idx),
-      data = <%= @report.flot[:data].to_json %>,
-      sensors = <%= @report.flot[:sensors].to_json %>;
+      data = <%= @report.flot[:data].to_json %>;
 
   var series = [];
   for (loc in data)  {
@@ -77,28 +43,118 @@ function plotAsSelected() {
   graph.with_tooltips();
 
   function handleDynamicZoom() {
-    $.extend(true, this.getOptions(), calculatePointsOpts(this));
-    this.setData(series);
-    this.setupGrid();
-    //now I've got access to axis values,
-    //next is to summarise data per x-tick
-    //and show it in bars
+    //means: 'ignore zoom out as the very first zoom action'
+    //otherwise, things go bonkers
+    if (!this.getOptions().xaxis.max || !this.getOptions().xaxis.min) {
+      return;
+    }
 
-    function calculatePointsOpts(plot) {
-      var opts = {show: false},
-          xaxis_range = plot.getOptions().xaxis.max - plot.getOptions().xaxis.min,
-          month = 1000*60*60*24*30;
+    var xaxis_range = this.getOptions().xaxis.max - this.getOptions().xaxis.min,
+        month = 1000*60*60*24*30,
+        overview = sensors[tab_idx].key == 'overview';
 
-      if (xaxis_range < 3*month && xaxis_range > month) {
-        opts = {show: true, radius: 2};
+    $.extend(true, this.getOptions().series, calculateSeriesOpts(this));
+    
+    this.setupGrid();//so that new ticks get generated
+
+    if (overview) {
+      //generate average per tick data
+      var ticks = this.getAxes().xaxis.ticks,
+          new_series = [];
+      $.each(series, function(i, s) {
+          new_series[i] = {
+            label: s.label,
+            data: []
+          };
+          $.each(ticks, function(j, v) {
+              var prev_tick = ticks[j-1];
+              if (prev_tick)  {
+                new_series[i].data.push([v.v, avgY(s.data, prev_tick.v, v.v)]);
+              }
+          });
+      });
+      this.setData(new_series);
+    }
+    else  {
+      this.setData(series);
+    }
+
+    function avgY(sdata, prev_tick, tick) {
+      var ey = 0,
+          q = 0;
+      $.each(sdata, function(i, v) {
+          if (v[0] > prev_tick && v[0] <= tick) {
+            ey+= v[1];
+            q++;
+          }
+      });
+      return ey/q;
+    }
+
+    function calculateSeriesOpts(plot) {
+      var points = {show: false},
+          lines = {show: false},
+          bars = {show: false};
+
+      if (overview) {
+        if (xaxis_range > month) {
+          bars.show = true;
+        }
+        else  {
+          lines.show = true;
+          points.show = true;
+          points.radius = 3;
+        }
       }
-      else if (xaxis_range < month)  {
-        opts = {show: true, radius: 3};
+      else {
+        lines.show = true;
+        if (xaxis_range < 3*month && xaxis_range > month) {
+          points.show = true;
+          points.radius = 2;
+        }
+        else if (xaxis_range < month)  {
+          points.show = true;
+          points.radius = 3;
+        }
       }
-      return {series: {points: opts}};
+      return {points: points, lines: lines, bars: bars};
     }
   }
 }
+
+$.fn.extend({
+  with_tooltips: function () {
+    function showTooltip(x, y, contents) {
+      $('<div id="tooltip">' + contents + '</div>').css( {
+        position: 'absolute',
+        display: 'none',
+        top: y + 15,
+        left: x + 15,
+        opacity: 0.80
+      }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
+    }
+
+    var previousPoint = null;
+    this.bind("plothover", function (event, pos, item) {
+      var tooltip = $('#tooltip');
+      if (item) {
+        if (previousPoint != item.datapoint) {
+          previousPoint = item.datapoint;
+          
+          tooltip.remove();
+
+          var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
+          showTooltip(item.pageX, item.pageY, label);
+        }
+      }
+      else {
+        tooltip.remove();
+        previousPoint = null;            
+      }
+    });
+  }
+});
+
 
 var sen_sel = $('#sensor_sel_tabs');
 var sensors = <%= @report.flot[:sensors].to_json %>;
@@ -118,8 +174,8 @@ if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initial
   sen_sel.bind('tabsshow', function() {plotAsSelected()});
   sen_sel.tabs('select', 0);
 }
-
 plotAsSelected();
 
 $('#loading').hide();
 $('input.ui-widget').val('');
+

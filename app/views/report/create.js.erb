@@ -1,7 +1,9 @@
 function plotAsSelected() {
   var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected'),
       graph = $('#graph'+tab_idx),
-      data = <%= @report.flot[:data].to_json %>;
+      data = <%= @report.flot[:data].to_json %>,
+      month = 1000*60*60*24*30,
+      overview = sensors[tab_idx].key == 'overview';
 
   var series = [];
   for (loc in data)  {
@@ -34,9 +36,7 @@ function plotAsSelected() {
     pan: {
       interactive: true
     },
-    series: {
-      lines: {show: true}
-    }
+    series: calculateSeriesOpts(<%= @report.flot[:zoom_range][1] %>)
   };
 
   global_plot = $.plot(graph, series, opts);
@@ -49,11 +49,9 @@ function plotAsSelected() {
       return;
     }
 
-    var xaxis_range = this.getOptions().xaxis.max - this.getOptions().xaxis.min,
-        month = 1000*60*60*24*30,
-        overview = sensors[tab_idx].key == 'overview';
+    var xaxis_range = this.getOptions().xaxis.max - this.getOptions().xaxis.min;
 
-    $.extend(true, this.getOptions().series, calculateSeriesOpts(this));
+    $.extend(true, this.getOptions().series, calculateSeriesOpts(xaxis_range));
     
     this.setupGrid();//so that new ticks get generated
 
@@ -91,36 +89,36 @@ function plotAsSelected() {
       });
       return ey/q;
     }
+  }
 
-    function calculateSeriesOpts(plot) {
-      var points = {show: false},
-          lines = {show: false},
-          bars = {show: false};
+  function calculateSeriesOpts(xaxis_range) {
+    var points = {show: false},
+        lines = {show: false},
+        bars = {show: false};
 
-      if (overview) {
-        if (xaxis_range > month) {
-          bars.show = true;
-          bars.barWidth = xaxis_range/30;
-        }
-        else  {
-          lines.show = true;
-          points.show = true;
-          points.radius = 3;
-        }
+    if (overview) {
+      if (xaxis_range > month) {
+        bars.show = true;
+        bars.barWidth = xaxis_range/30;
       }
-      else {
+      else  {
         lines.show = true;
-        if (xaxis_range < 3*month && xaxis_range > month) {
-          points.show = true;
-          points.radius = 2;
-        }
-        else if (xaxis_range < month)  {
-          points.show = true;
-          points.radius = 3;
-        }
+        points.show = true;
+        points.radius = 3;
       }
-      return {points: points, lines: lines, bars: bars};
     }
+    else {
+      lines.show = true;
+      if (xaxis_range < 3*month && xaxis_range > month) {
+        points.show = true;
+        points.radius = 2;
+      }
+      else if (xaxis_range < month)  {
+        points.show = true;
+        points.radius = 3;
+      }
+    }
+    return {points: points, lines: lines, bars: bars};
   }
 }
 

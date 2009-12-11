@@ -5,9 +5,10 @@ function plotAsSelected() {
         var points = {show: false},
             lines = {show: false},
             bars = {show: false},
+            month = 1000*60*60*24*30,
             show_tooltips = false;
 
-        if (overview) {
+        if (IS_OVERVIEW) {
           if (xaxis_range > month) {
             bars.show = true;
             bars.barWidth = xaxis_range/30;
@@ -69,14 +70,14 @@ function plotAsSelected() {
 
       //we only want to summarise bar data
       if (!plot.getOptions().series.bars.show) {
-        return series;
+        return SERIES;
       }
 
       //generate average per tick data
       var ticks = plot.getAxes().xaxis.ticks,
           new_series = [];
 
-      $.each(series, function(i, s) {
+      $.each(SERIES, function(i, s) {
           new_series[i] = {
             label: s.label,
             data: [],
@@ -94,7 +95,7 @@ function plotAsSelected() {
 
     setDynamicOptions(plot);
 
-    plot.setData(overview ? transformOverviewData(plot) : series);
+    plot.setData(IS_OVERVIEW ? transformOverviewData(plot) : SERIES);
   }
   function setupTooltips(plot) {
     function showTooltip(x, y, contents) {
@@ -131,15 +132,13 @@ function plotAsSelected() {
   }
 
   var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected'),
-      graph = $('#graph'+tab_idx),
       data = <%= @report.flot[:data].to_json %>,
-      month = 1000*60*60*24*30,
-      overview = sensors[tab_idx].key == 'overview';
+      IS_OVERVIEW = SENSORS[tab_idx].key == 'overview';
 
-  var series = [];
+  var SERIES = [];
   for (loc in data)  {
-    series.push({
-      data: data[loc][sensors[tab_idx].key],
+    SERIES.push({
+      data: data[loc][SENSORS[tab_idx].key],
       label: loc
     });
   }
@@ -151,10 +150,10 @@ function plotAsSelected() {
       panRange: <%= @report.flot[:pan_range].to_json %>
     },
     yaxis: {
-      min: sensors[tab_idx].min_y,
-      max: sensors[tab_idx].max_y,
-      zoomRange: [sensors[tab_idx].max_y - sensors[tab_idx].min_y, sensors[tab_idx].max_y - sensors[tab_idx].min_y],
-      panRange: [sensors[tab_idx].min_y, sensors[tab_idx].max_y]
+      min: SENSORS[tab_idx].min_y,
+      max: SENSORS[tab_idx].max_y,
+      zoomRange: [SENSORS[tab_idx].max_y - SENSORS[tab_idx].min_y, SENSORS[tab_idx].max_y - SENSORS[tab_idx].min_y],
+      panRange: [SENSORS[tab_idx].min_y, SENSORS[tab_idx].max_y]
     },
     grid: {
       color: $('.ui-widget-header').css('background-color'),
@@ -171,20 +170,19 @@ function plotAsSelected() {
     }
   };
 
-  var plot = $.plot(graph, series, opts);
+  var plot = $.plot($('#graph'+tab_idx), SERIES, opts);
   setupTooltips(plot);
 
-  PLOT = plot;
+  return plot;
 }
 
 var sen_sel = $('#sensor_sel_tabs');
-var sensors = <%= @report.flot[:sensors].to_json %>;
-PLOT = null; //FIXME this is for accessing plot from firebug console. Remove after development is complete
+var SENSORS = <%= @report.flot[:sensors].to_json %>;
 
 if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initialized
   sen_sel.prepend('<ul></ul>').tabs();
 
-  $.each(sensors, function(i, val) {
+  $.each(SENSORS, function(i, val) {
       var graph = $('<div id="graph'+i+'" class="flot-graph"/>');
       var graph_w = parseInt( /\d+/.exec(graph.css('width')) );
       var graph_h = parseInt( /\d+/.exec(graph.css('height')) );
@@ -195,7 +193,8 @@ if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initial
   sen_sel.bind('tabsshow', function() {plotAsSelected()});
   sen_sel.tabs('select', 0);
 }
-plotAsSelected();
+
+_PLOT = plotAsSelected();//FIXME _PLOT is for accessing plot from firebug console. Remove after development is complete
 
 $('#loading').hide();
 $('input.ui-widget').val('');

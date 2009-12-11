@@ -1,4 +1,90 @@
 function plotAsSelected() {
+  function processDynamicSetup(plot)  {
+    function setDynamicOptions(plot) {
+      function calculateSeriesOpts(xaxis_range) {
+        var points = {show: false},
+            lines = {show: false},
+            bars = {show: false};
+
+        if (overview) {
+          if (xaxis_range > month) {
+            bars.show = true;
+            bars.barWidth = xaxis_range/30;
+          }
+          else  {
+            lines.show = true;
+            points.show = true;
+            points.radius = 3;
+          }
+        }
+        else {
+          lines.show = true;
+          if (xaxis_range < 3*month && xaxis_range > month) {
+            points.show = true;
+            points.radius = 2;
+          }
+          else if (xaxis_range < month)  {
+            points.show = true;
+            points.radius = 3;
+          }
+        }
+        return {points: points, lines: lines, bars: bars};
+      }
+
+      var xaxis_range;
+      if (!plot.getOptions().xaxis.max || !plot.getOptions().xaxis.min) {
+        xaxis_range = <%= @report.flot[:zoom_range][1] %>;
+      }
+      else  {
+        xaxis_range = plot.getOptions().xaxis.max - plot.getOptions().xaxis.min;
+      }
+
+      $.extend(true, plot.getOptions().series, calculateSeriesOpts(xaxis_range));
+    }
+
+    function transformOverviewData(plot)  {
+      function avgY(sdata, prev_tick, tick) {
+        var ey = 0,
+            q = 0;
+        $.each(sdata, function(i, v) {
+            if (v[0] > prev_tick && v[0] <= tick) {
+              ey+= v[1];
+              q++;
+            }
+        });
+        return ey/q;
+      }
+
+      //generate average per tick data
+      var ticks = plot.getAxes().xaxis.ticks,
+          new_series = [];
+
+      $.each(series, function(i, s) {
+          new_series[i] = {
+            label: s.label,
+            data: [],
+            bars: {align: i == 0 ? 'center' : 'left'}
+          };
+          $.each(ticks, function(j, v) {
+              var prev_tick = ticks[j-1];
+              if (prev_tick)  {
+                new_series[i].data.push([v.v, avgY(s.data, prev_tick.v, v.v)]);
+              }
+          });
+      });
+      plot.setData(new_series);
+    }
+
+    setDynamicOptions(plot);
+
+    if (overview) {
+      transformOverviewData(plot);
+    }
+    else  {
+      plot.setData(series);
+    }
+  }
+
   var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected'),
       graph = $('#graph'+tab_idx),
       data = <%= @report.flot[:data].to_json %>,
@@ -30,96 +116,18 @@ function plotAsSelected() {
       hoverable: true
     },
     zoom: {
-      interactive: true,
-      beforeDraw: handleDynamicZoom
+      interactive: true
     },
     pan: {
       interactive: true
     },
-    series: calculateSeriesOpts(<%= @report.flot[:zoom_range][1] %>)
+    hooks: {
+      processSetup: [processDynamicSetup]
+    }
   };
 
   global_plot = $.plot(graph, series, opts);
   graph.with_tooltips();
-
-  function handleDynamicZoom() {
-    //means: 'ignore zoom out as the very first zoom action'
-    //otherwise, things go bonkers
-    if (!this.getOptions().xaxis.max || !this.getOptions().xaxis.min) {
-      return;
-    }
-
-    var xaxis_range = this.getOptions().xaxis.max - this.getOptions().xaxis.min;
-
-    $.extend(true, this.getOptions().series, calculateSeriesOpts(xaxis_range));
-    
-    this.setupGrid();//so that new ticks get generated
-
-    if (overview) {
-      //generate average per tick data
-      var ticks = this.getAxes().xaxis.ticks,
-          new_series = [];
-      $.each(series, function(i, s) {
-          new_series[i] = {
-            label: s.label,
-            data: [],
-            bars: {align: i == 0 ? 'center' : 'left'}
-          };
-          $.each(ticks, function(j, v) {
-              var prev_tick = ticks[j-1];
-              if (prev_tick)  {
-                new_series[i].data.push([v.v, avgY(s.data, prev_tick.v, v.v)]);
-              }
-          });
-      });
-      this.setData(new_series);
-    }
-    else  {
-      this.setData(series);
-    }
-
-    function avgY(sdata, prev_tick, tick) {
-      var ey = 0,
-          q = 0;
-      $.each(sdata, function(i, v) {
-          if (v[0] > prev_tick && v[0] <= tick) {
-            ey+= v[1];
-            q++;
-          }
-      });
-      return ey/q;
-    }
-  }
-
-  function calculateSeriesOpts(xaxis_range) {
-    var points = {show: false},
-        lines = {show: false},
-        bars = {show: false};
-
-    if (overview) {
-      if (xaxis_range > month) {
-        bars.show = true;
-        bars.barWidth = xaxis_range/30;
-      }
-      else  {
-        lines.show = true;
-        points.show = true;
-        points.radius = 3;
-      }
-    }
-    else {
-      lines.show = true;
-      if (xaxis_range < 3*month && xaxis_range > month) {
-        points.show = true;
-        points.radius = 2;
-      }
-      else if (xaxis_range < month)  {
-        points.show = true;
-        points.radius = 3;
-      }
-    }
-    return {points: points, lines: lines, bars: bars};
-  }
 }
 
 $.fn.extend({

@@ -1,10 +1,11 @@
 function plotAsSelected() {
   function processDynamicSetup(plot)  {
     function setDynamicOptions(plot) {
-      function calculateSeriesOpts(xaxis_range) {
+      function calculateOpts(xaxis_range) {
         var points = {show: false},
             lines = {show: false},
-            bars = {show: false};
+            bars = {show: false},
+            show_tooltips = false;
 
         if (overview) {
           if (xaxis_range > month) {
@@ -15,10 +16,12 @@ function plotAsSelected() {
             lines.show = true;
             points.show = true;
             points.radius = 3;
+            show_tooltips = true;
           }
         }
         else {
           lines.show = true;
+          show_tooltips = true;
           if (xaxis_range < 3*month && xaxis_range > month) {
             points.show = true;
             points.radius = 2;
@@ -28,7 +31,16 @@ function plotAsSelected() {
             points.radius = 3;
           }
         }
-        return {points: points, lines: lines, bars: bars};
+        return {
+          series: {
+            points: points,
+            lines: lines,
+            bars: bars
+          },
+          grid: {
+            show_tooltips: show_tooltips
+          }
+        };
       }
 
       var xaxis_range;
@@ -39,7 +51,7 @@ function plotAsSelected() {
         xaxis_range = plot.getOptions().xaxis.max - plot.getOptions().xaxis.min;
       }
 
-      $.extend(true, plot.getOptions().series, calculateSeriesOpts(xaxis_range));
+      $.extend(true, plot.getOptions(), calculateOpts(xaxis_range));
     }
 
     function transformOverviewData(plot)  {
@@ -53,6 +65,11 @@ function plotAsSelected() {
             }
         });
         return ey/q;
+      }
+
+      //we only want to summarise bar data
+      if (!plot.getOptions().series.bars.show) {
+        return series;
       }
 
       //generate average per tick data
@@ -72,17 +89,45 @@ function plotAsSelected() {
               }
           });
       });
-      plot.setData(new_series);
+      return new_series;
     }
 
     setDynamicOptions(plot);
 
-    if (overview) {
-      transformOverviewData(plot);
+    plot.setData(overview ? transformOverviewData(plot) : series);
+  }
+  function setupTooltips(plot) {
+    function showTooltip(x, y, contents) {
+      $('<div id="tooltip">' + contents + '</div>').css( {
+        position: 'absolute',
+        display: 'none',
+        top: y + 15,
+        left: x + 15,
+        opacity: 0.80
+      }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
     }
-    else  {
-      plot.setData(series);
-    }
+
+    var previousPoint = null;
+    plot.getPlaceholder().bind("plothover", function (event, pos, item) {
+        if (!plot.getOptions().grid.show_tooltips)  {
+          return;
+        }
+        var tooltip = $('#tooltip');
+        if (item) {
+          if (previousPoint != item.datapoint) {
+            previousPoint = item.datapoint;
+            
+            tooltip.remove();
+
+            var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
+            showTooltip(item.pageX, item.pageY, label);
+          }
+        }
+        else {
+          tooltip.remove();
+          previousPoint = null;            
+        }
+    });
   }
 
   var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected'),
@@ -126,47 +171,15 @@ function plotAsSelected() {
     }
   };
 
-  global_plot = $.plot(graph, series, opts);
-  graph.with_tooltips();
+  var plot = $.plot(graph, series, opts);
+  setupTooltips(plot);
+
+  PLOT = plot;
 }
-
-$.fn.extend({
-  with_tooltips: function () {
-    function showTooltip(x, y, contents) {
-      $('<div id="tooltip">' + contents + '</div>').css( {
-        position: 'absolute',
-        display: 'none',
-        top: y + 15,
-        left: x + 15,
-        opacity: 0.80
-      }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
-    }
-
-    var previousPoint = null;
-    this.bind("plothover", function (event, pos, item) {
-      var tooltip = $('#tooltip');
-      if (item) {
-        if (previousPoint != item.datapoint) {
-          previousPoint = item.datapoint;
-          
-          tooltip.remove();
-
-          var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
-          showTooltip(item.pageX, item.pageY, label);
-        }
-      }
-      else {
-        tooltip.remove();
-        previousPoint = null;            
-      }
-    });
-  }
-});
-
 
 var sen_sel = $('#sensor_sel_tabs');
 var sensors = <%= @report.flot[:sensors].to_json %>;
-global_plot = null; //FIXME this is for accessing plot from firebug console. Remove after development is complete
+PLOT = null; //FIXME this is for accessing plot from firebug console. Remove after development is complete
 
 if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initialized
   sen_sel.prepend('<ul></ul>').tabs();

@@ -97,35 +97,25 @@ function plotAsSelected() {
 
     plot.setData(IS_OVERVIEW ? transformOverviewData(plot) : SERIES);
   }
-  function setupTooltips(plot) {
-    function showTooltip(x, y, contents) {
-      $('<div id="tooltip">' + contents + '</div>').css( {
-        position: 'absolute',
-        display: 'none',
-        top: y + 15,
-        left: x + 15,
-        opacity: 0.80
-      }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
-    }
 
+  function setupTooltips(plot) {
     var previousPoint = null;
     plot.getPlaceholder().bind("plothover", function (event, pos, item) {
         if (!plot.getOptions().grid.show_tooltips)  {
           return;
         }
-        var tooltip = $('#tooltip');
         if (item) {
           if (previousPoint != item.datapoint) {
             previousPoint = item.datapoint;
             
-            tooltip.remove();
+            removeTooltip();
 
             var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
             showTooltip(item.pageX, item.pageY, label);
           }
         }
         else {
-          tooltip.remove();
+          removeTooltip();
           previousPoint = null;            
         }
     });

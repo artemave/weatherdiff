@@ -54,3 +54,8 @@ input.search-form {
   margin-top:0.1em;
   width:14em;
 }
+
+.tooltip-hint {
+  border-bottom: 1px dashed #5C9CCC;
+  color: #5C9CCC;
+}

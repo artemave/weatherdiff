@@ -3,6 +3,7 @@ class ReportController < ApplicationController
 
   def new
     @report = Report.new
+    @locations = Location.all
   end
 
   def create

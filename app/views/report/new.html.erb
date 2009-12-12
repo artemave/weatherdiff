@@ -1,5 +1,5 @@
 <p>This is Weatherdiff, a place where you can check out weather history and compare different places.</p>
-<p>This is yet a <span class="ui-priority-primary">demo</span> site. Only a <span class="ui-priority-primary">number</span> of locations available.</p>
+<p>This is yet a <span class="ui-priority-primary">demo</span> site. Only a <span class="tooltip-hint" id="location_list">certain locations</span> are available.</p>
 
 <% remote_form_for(@report, :url => report_path) do |f| -%>
   <div class="search-form-table">
@@ -20,6 +20,8 @@
 <div id="sensor_sel_tabs"></div>
 
 <script type="text/javascript">
+  var location_list = '<%= @locations.map {|l| l.name =~ /([^,]+)(?:, (.+))?$/; $2 ? "#{$1} (#{$2})" : $1}.join(', ') %>';
+
   $(function () {
     $('input.ui-widget')
       .autocomplete(<%= "'#{locations_path}'" %>)
@@ -36,5 +38,14 @@
           $('form.new_report').get(0).onsubmit();
         }
       });
+
+    $('#location_list').hover(
+      function (e)  {
+      showTooltip(e.pageX, e.pageY, '<div style="width:500px">'+location_list+'</div>');
+      },
+      function ()  {
+        removeTooltip();
+      }
+    );
   });
 </script>

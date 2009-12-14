@@ -21,8 +21,11 @@
   %>
 </head>
 <body>
-  <div id="header"><div id="logo">LOGO</div></div>
-  <div id="content">
+  <div id="header">
+    <div class="site">
+      <div id="logo">LOGO</div></div>
+    </div>
+  <div id="content" class="site">
     <p style="color: green"><%= flash[:notice] %></p>
     <p style="color: red"><%= flash[:error] %></p>
     <%= yield  %>

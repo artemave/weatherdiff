@@ -16,16 +16,16 @@ body {
   background: #ddd;
 }
 
-#logo {
-  padding:15px 115px;
+.site {
+  width: 956px;
+  padding: 1em;
+  text-align: left;
+  margin: 0 auto;
 }
 
 #content {
   margin: -60px auto;
-  position: relative;
-  width: 956px;
   background: #fff;
-  padding: 1em;
 }
 
 .search-form-table {

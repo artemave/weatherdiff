@@ -7,7 +7,7 @@ class LocationsController < ApplicationController
 	}
 
   def index
-    @locations = Location.find(:all)
+    @locations = Location.with_samples.all
 
     respond_to do |format|
       format.html # index.html.erb

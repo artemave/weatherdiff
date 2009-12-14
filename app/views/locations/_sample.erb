@@ -1,5 +1,5 @@
 <tr class="<%= cycle :odd, :even %>">
-  <td><%= ss.rss_ts %></td>
+  <td><%= ss.rss_ts.to_s(:db) %></td>
 	<td><%=h ss.overview %></td>
 	<td><%=h ss.max_temp %></td>
 	<td><%=h ss.min_temp %></td>

@@ -8,7 +8,7 @@ class Report
     @flot = {}
   end
 
-  def generate_flot_data
+  def generate_flot_data!
     ls = Location.with_samples.find(:all, :conditions => ['name in (?,?)', location1, location2]);
     max_y, min_y, min_ts, max_ts = {}, {}, nil
     @flot[:data] = Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = [] } }

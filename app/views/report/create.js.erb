@@ -56,11 +56,11 @@ function plotAsSelected() {
     }
 
     function transformOverviewData(plot)  {
-      function avgY(sdata, prev_tick, tick) {
+      function avgY(sdata, tick, next_tick) {
         var ey = 0,
             q = 0;
         $.each(sdata, function(i, v) {
-            if (v[0] > prev_tick && v[0] <= tick) {
+            if (v[0] >= tick && v[0] < next_tick) {
               ey+= v[1];
               q++;
             }
@@ -84,9 +84,9 @@ function plotAsSelected() {
             bars: {align: i == 0 ? 'center' : 'left'}
           };
           $.each(ticks, function(j, v) {
-              var prev_tick = ticks[j-1];
-              if (prev_tick)  {
-                new_series[i].data.push([v.v, avgY(s.data, prev_tick.v, v.v)]);
+              var next_tick = ticks[j+1];
+              if (next_tick)  {
+                new_series[i].data.push([v.v, avgY(s.data, v.v, next_tick.v)]);
               }
           });
       });

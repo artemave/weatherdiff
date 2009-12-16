@@ -110,7 +110,16 @@ function plotAsSelected() {
             
             removeTooltip();
 
-            var label = /-|^0/.test(item.datapoint[1]) ? item.datapoint[1] : '+'+item.datapoint[1];
+            var overview_map = <%= SampleSummary::TO_FLOT.invert.to_json %>,
+                val = item.datapoint[1],
+                label;
+
+            if (IS_OVERVIEW)  {
+              label = '<img src="/images/'+overview_map[val]+'.png">'
+            }
+            else  {
+              label = /-|^0/.test(val) ? val : '+'+val;
+            }
             showTooltip(item.pageX, item.pageY, label);
           }
         }

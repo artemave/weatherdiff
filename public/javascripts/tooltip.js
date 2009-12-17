@@ -1,14 +1,14 @@
-function showTooltip(x, y, contents) {
-  $('<div id="tooltip">' + contents + '</div>').css( {
+function showTooltip(x, y, contents, css_class) {
+  $('<div class="site-tooltip">' + contents + '</div>').css( {
     position: 'absolute',
     display: 'none',
-    top: y + 15,
+    top: y + 5,
     left: x + 15,
     opacity: 0.80
-  }).addClass('ui-state-highlight').appendTo("body").fadeIn(200);
+  }).addClass(css_class == undefined ? 'ui-state-highlight' : '').appendTo("body").fadeIn(200);
 }
 
 function removeTooltip()  {
-  $('#tooltip').remove();
+  $('.site-tooltip').remove();
 }
 

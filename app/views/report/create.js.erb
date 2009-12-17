@@ -115,12 +115,14 @@ function plotAsSelected() {
                 label;
 
             if (IS_OVERVIEW)  {
-              label = '<img src="/images/'+overview_map[val]+'.png">'
+              label = '<img src="/images/'+overview_map[val]+'.png">';
+              showTooltip(item.pageX, item.pageY, label, '');
+              showTooltip(item.pageX, item.pageY + 50, overview_map[val]);
             }
             else  {
               label = /-|^0/.test(val) ? val : '+'+val;
+              showTooltip(item.pageX, item.pageY, label);
             }
-            showTooltip(item.pageX, item.pageY, label);
           }
         }
         else {
@@ -131,8 +133,8 @@ function plotAsSelected() {
   }
 
   function setupNavControls(plot) {
-    function addButton(class, right, top, offset) {
-      $('<span class="ui-icon '+class+'" style="cursor: pointer;position: absolute;right:' + right + 'px;top:' + top + 'px"/>')
+    function addButton(css_class, right, top, offset) {
+      $('<span class="ui-icon '+css_class+'" style="cursor: pointer; cursor:hand; position: absolute;right:' + right + 'px;top:' + top + 'px"/>')
       .appendTo(plot.getPlaceholder())
       .click(function (e) {
         e.preventDefault();
@@ -140,7 +142,7 @@ function plotAsSelected() {
           plot.pan(offset);
         }
         else  {
-          /plus/.test(class) ? plot.zoom() : plot.zoomOut();
+          /plus/.test(css_class) ? plot.zoom() : plot.zoomOut();
         }
       });
     }
@@ -148,6 +150,19 @@ function plotAsSelected() {
     addButton('ui-icon-circle-triangle-w', 55, 40, {left: -100});
     addButton('ui-icon-circle-plus', 40, 25);
     addButton('ui-icon-circle-minus', 40, 55);
+  }
+
+  function imageTickFormatter(val, axis) {
+    var overview_map = <%= SampleSummary::TO_FLOT.invert.to_json %>,
+        tick;
+
+    if (IS_OVERVIEW)  {
+      tick = overview_map[val] ? '<img src="/images/'+overview_map[val]+'.png">' : '';
+    }
+    else  {
+      tick = /-|^0/.test(val) ? val : '+'+val;
+    }
+    return tick;
   }
 
   var tab_idx = $('#sensor_sel_tabs').tabs('option', 'selected'),
@@ -172,7 +187,8 @@ function plotAsSelected() {
       min: SENSORS[tab_idx].min_y,
       max: SENSORS[tab_idx].max_y,
       zoomRange: [SENSORS[tab_idx].max_y - SENSORS[tab_idx].min_y, SENSORS[tab_idx].max_y - SENSORS[tab_idx].min_y],
-      panRange: [SENSORS[tab_idx].min_y, SENSORS[tab_idx].max_y]
+      panRange: [SENSORS[tab_idx].min_y, SENSORS[tab_idx].max_y],
+      tickFormatter: imageTickFormatter
     },
     grid: {
       color: $('.ui-widget-header').css('background-color'),

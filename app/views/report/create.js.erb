@@ -100,7 +100,7 @@ function plotAsSelected() {
 
   function setupTooltips(plot) {
     var previousPoint = null;
-    plot.getPlaceholder().bind("plothover", function (event, pos, item) {
+    plot.getPlaceholder().unbind('plothover').bind('plothover', function (event, pos, item) {
         if (!plot.getOptions().grid.show_tooltips)  {
           return;
         }

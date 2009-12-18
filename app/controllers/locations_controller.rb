@@ -7,10 +7,11 @@ class LocationsController < ApplicationController
 	}
 
   def index
-    @locations = Location.with_samples.all
-
     respond_to do |format|
-      format.html # index.html.erb
+      format.html {
+        @locations = Location.with_samples.all
+        render :template => 'locations/index'
+      }
       format.xml  { render :xml => @locations }
       format.js {
         # q and limit are coming from by jQuery autocomplete plugin

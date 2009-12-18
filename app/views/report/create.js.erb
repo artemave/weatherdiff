@@ -207,6 +207,12 @@ function plotAsSelected() {
       position: 'nw'
     }
   };
+  
+  //XXX gross wtf from flot library: it can't figure those out on first load
+  if (IS_OVERVIEW)  {
+    opts.yaxis.labelHeight = 48;
+    opts.yaxis.labelWidth = 48;
+  }
 
   var plot = $.plot($('#graph'+tab_idx), SERIES, opts);
   setupTooltips(plot);
@@ -229,11 +235,13 @@ if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initial
       graph_container.append(graph);
       sen_sel.append(graph_container).tabs('add', '#graph_cont'+i, val.name);
   });
+  sen_sel.tabs('select', 1);//XXX hax in order for subsequent ('select', 0) to work. wtf from jquery-ui
   sen_sel.bind('tabsshow', function() {_PLOT = plotAsSelected()});
   sen_sel.tabs('select', 0);
 }
-
-_PLOT = plotAsSelected();//FIXME _PLOT is for accessing plot from firebug console. Remove after development is complete
+else  {
+  _PLOT = plotAsSelected();//FIXME _PLOT is only needed for firebugging
+}
 
 $('#loading').hide();
 $('input.ui-widget').val('');

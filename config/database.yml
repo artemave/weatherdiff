@@ -4,7 +4,7 @@ development:
   adapter: mysql
   database: weatherdiff_development
   username: root
-  password: glob
+  password: root
   host: localhost
 #  socket: /var/lib/mysql/mysql.sock
 
@@ -15,7 +15,7 @@ test:
   adapter: mysql
   database: weatherdiff_test
   username: root
-  password: glob
+  password: root
   host: localhost
 #  socket: /var/lib/mysql/mysql.sock
 

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091208120406) do
+ActiveRecord::Schema.define(:version => 20091219230117) do
 
   create_table "locations", :force => true do |t|
     t.string   "feed"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(:version => 20091208120406) do
     t.datetime "updated_at"
   end
 
+  add_index "sample_summaries", ["location_id"], :name => "index_sample_summaries_on_location_id"
+
   create_table "samples", :force => true do |t|
     t.datetime "rss_ts"
     t.string   "name"
@@ -37,6 +39,7 @@ ActiveRecord::Schema.define(:version => 20091208120406) do
   end
 
   add_index "samples", ["location_id"], :name => "fk_sample_location"
+  add_index "samples", ["sample_summary_id"], :name => "index_samples_on_sample_summary_id"
 
   create_table "users", :force => true do |t|
     t.string   "login",                     :limit => 40

@@ -11,7 +11,7 @@ body {
 
 #header {
   border-bottom:2px solid #DDDDDD;
-  height:115px;
+  height:100px;
   margin:0;
   background: #ddd;
 }
@@ -24,7 +24,7 @@ body {
 }
 
 #content {
-  margin: -60px auto;
+  margin: -50px auto;
   background: #fff;
 }
 

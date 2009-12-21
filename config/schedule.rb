@@ -1,5 +1,5 @@
 # Learn more: http://github.com/javan/whenever
 
 every :hour do
-  runner "Location.find(:all).each { |l| l.sample }; Rails.logger.flush"
+  runner 'Location.all.each {|l| begin; l.sample; rescue => e; Rails.logger.error e.backtrace.join("\n") end}'
 end

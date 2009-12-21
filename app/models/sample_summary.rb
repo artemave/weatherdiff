@@ -1,5 +1,5 @@
 class SampleSummary < ActiveRecord::Base
-  has_many :samples
+  has_many :samples, :dependent => :destroy
   belongs_to :location
 	validates_presence_of :rss_ts
 	validates_associated :location

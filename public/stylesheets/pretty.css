@@ -10,10 +10,16 @@ body {
 }
 
 #header {
-  border-bottom:2px solid #DDDDDD;
+  border-bottom:0px solid #DDDDDD;
   height:100px;
   margin:0;
-  background: #ddd;
+  background: #ddd url(/images/header_bg.png) repeat-x;
+}
+
+#footer {
+  height:100px;
+  margin:0;
+  background: #ddd url(/images/footer_bg.png) repeat-x;
 }
 
 .site {
@@ -24,7 +30,8 @@ body {
 }
 
 #content {
-  margin: -50px auto;
+  margin-top: -50px;
+  margin-bottom: -50px;
   background: #fff;
 }
 

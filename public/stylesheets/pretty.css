@@ -1,3 +1,7 @@
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
   font-size: 1em;
@@ -10,7 +14,6 @@ body {
 }
 
 #header {
-  border-bottom:0px solid #DDDDDD;
   height:100px;
   margin:0;
   background: #ddd url(/images/header_bg.png) repeat-x;
@@ -33,6 +36,7 @@ body {
   margin-top: -50px;
   margin-bottom: -50px;
   background: #fff;
+  position: relative;/*for overlaying footer*/
 }
 
 .search-form-table {

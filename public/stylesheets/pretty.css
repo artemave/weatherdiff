@@ -1,11 +1,16 @@
 html, body {
   height: 100%;
+  background: #bcbcbc;
 }
 
 body {
   font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
   font-size: 1em;
   margin: 0;
+}
+
+#wrapper {
+  background: #fff;
 }
 
 .flot-graph {

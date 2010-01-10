@@ -21,15 +21,17 @@
   %>
 </head>
 <body>
-  <div id="header">
-    <div class="site">
-      <div id="logo">LOGO</div></div>
+  <div id="wrapper">
+    <div id="header">
+      <div class="site">
+        <div id="logo">LOGO</div></div>
+      </div>
+    <div id="content" class="site ui-corner-all">
+      <p style="color: green"><%= flash[:notice] %></p>
+      <p style="color: red"><%= flash[:error] %></p>
+      <%= yield  %>
     </div>
-  <div id="content" class="site ui-corner-all">
-    <p style="color: green"><%= flash[:notice] %></p>
-    <p style="color: red"><%= flash[:error] %></p>
-    <%= yield  %>
+    <div id="footer"></div>
   </div>
-  <div id="footer"></div>
 </body>
 </html>

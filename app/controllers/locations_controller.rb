@@ -1,11 +1,12 @@
 class LocationsController < ApplicationController
-  # GET /locations
-  # GET /locations.xml
+  before_filter :store_location, :only => [:index, :new, :show, :edit] #for redirect back after login
 	before_filter { |c|
     # XXX nonsecure backdoor for jquery autocomplete
 	  c.send(:authenticate) unless c.request.format.js? and c.action_name == 'index'
 	}
 
+  # GET /locations
+  # GET /locations.xml
   def index
     respond_to do |format|
       format.html {
@@ -14,7 +15,7 @@ class LocationsController < ApplicationController
       }
       format.xml  { render :xml => @locations }
       format.js {
-        # q and limit are coming from by jQuery autocomplete plugin
+        # q and limit are coming from jQuery autocomplete plugin
         @locations = Location.find(:all, :conditions => ["name like ?", "%#{params[:q]}%"], :limit => params[:limit])
         render :text => @locations.map(&:name).join("\n")
       }

@@ -1,8 +1,9 @@
 <tr class="<%= cycle :even, :odd %>">
+  <% ss = location.sample_summaries -%>
 	<td><%=h location.name %></td>
 	<td><%=h location.tz %></td>
-  <td><%=h location.sample_summaries.max{|a,b| a.rss_ts <=> b.rss_ts}.rss_ts.to_s(:short) %></td>
-	<td><%=h location.sample_summaries.length %></td>
+  <td><%=h ss.length > 0 ? ss.max{|a,b| a.rss_ts <=> b.rss_ts}.rss_ts.to_s(:short) : '-' %></td>
+	<td><%=h ss.length %></td>
 	<td><%= link_to 'Show', location_path(location) %></td>
 	<td><%= link_to 'Edit', edit_location_path(location) %></td>
 	<td><%= link_to 'Destroy', location, :confirm => 'Are you sure?', :method => :delete %></td>

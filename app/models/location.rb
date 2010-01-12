@@ -10,27 +10,27 @@ class Location < ActiveRecord::Base
   named_scope :with_samples, :include => [:sample_summaries, :samples]
 
 	def sample
-		today = Time.now.in_time_zone(tz)
+		today = Time.now.to_date
 
 		return if already_sampled?(today)
 
-		logger.info "Start sampling #{name} for #{today.to_date}"
+		logger.info "Start sampling #{name} for #{today}"
 
 		content = ''
 		open(feed) {|s| content = s.read }
 		rss = RSS::Parser.parse(content, false)
 
-		raise "Empty feed for #{name} on #{today.to_date}" if rss.items.empty?
+		raise "Empty feed for #{name} on #{today}" if rss.items.empty?
 
-		rss_ts = rss.channel.date.in_time_zone(tz)
+    first_item = rss.items[0]
 
-		if rss_ts.to_date != today.to_date
-			logger.info "#{today.to_date} is not sampled, however feed ts is not for today #{rss_ts}. Skipping."
-			return
-		end
+    unless first_item.guid.to_s =~ /#{today}/
+      logger.info "First feed item #{first_item.guid} #{first_item.guid} does not cover today #{today}. Skipping."
+      return
+    end
 
     ss = nil
-		rss.items[0].title.split(',').each_with_index do |ri, i|
+		first_item.title.split(',').each_with_index do |ri, i|
 			ri =~ /^\s*([^:]+)\s*:\s*(.*)\s*$/
 			sample_name, val = $1, $2
 
@@ -39,12 +39,8 @@ class Location < ActiveRecord::Base
 			# below we want to check if weekday equals to current. Because it can be for the 
 			# day after
 			if i == 0 
-				if sample_name != rss_ts.strftime('%A')
-					logger.info "First item in todays - #{rss_ts} - feed covers the day after. Skipping. #{rss.items[0].title}"
-					return
-        end
 				sample_name = 'overview' # we don't want weekday in db
-        ss = SampleSummary.create!(:rss_ts => today.to_datetime, :location => self)
+        ss = SampleSummary.create!(:rss_ts => Time.now.to_datetime, :location => self)
 			  logger.info "Sample summary: #{ss.inspect}"
 			end
 
@@ -55,9 +51,9 @@ class Location < ActiveRecord::Base
 		end
 	end
 
-	def already_sampled?(dt)
-		logger.info "Is #{name} already sampled for #{dt.to_date}?"
-		if sample_summaries.find :first, :conditions => [ 'DATE(rss_ts) = DATE(?)', dt ]
+	def already_sampled?(date)
+		logger.info "Is #{name} already sampled for #{date}?"
+		if sample_summaries.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
       logger.info "Yes"
       return true
     else

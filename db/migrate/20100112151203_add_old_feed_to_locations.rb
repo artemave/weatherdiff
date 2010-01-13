@@ -2,7 +2,7 @@ class AddOldFeedToLocations < ActiveRecord::Migration
   def self.up
     add_column :locations, :old_feed, :string
     Location.all.each do |l|
-      l.old_feed = l.feed.clone
+      l.old_feed = l.feed
       l.feed = l.feed.sub(/^.*?(\d+)\.xml$/, 'http://newsrss.bbc.co.uk/weather/forecast/\1/Next3DaysRSS.xml')
       l.save!
     end
@@ -10,7 +10,7 @@ class AddOldFeedToLocations < ActiveRecord::Migration
 
   def self.down
     Location.all.each do |l|
-      l.feed = l.old_feed.clone
+      l.feed = l.old_feed
       l.save!
     end
     remove_column :locations, :old_feed

@@ -12,10 +12,10 @@ class Report
     ls = Location.with_samples.find(:all, :conditions => ['name in (?,?)', location1, location2]);
     max_y, min_y, min_ts, max_ts = {}, {}, nil
     @flot[:data] = Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = [] } }
+
     ls.each do |loc|
       for ss in loc.sample_summaries
-        local_dt = ss.rss_ts.in_time_zone(loc.tz)
-        ts = Time.gm(local_dt.year, local_dt.month, local_dt.day).to_i * 1000 # flot likes miliseconds
+        ts = Time.gm(ss.rss_ts.year, ss.rss_ts.month, ss.rss_ts.day).to_i * 1000 # flot likes miliseconds
         max_ts = ts unless max_ts and max_ts > ts
         min_ts = ts unless min_ts and min_ts < ts
         

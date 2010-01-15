@@ -10,7 +10,7 @@ class Location < ActiveRecord::Base
   named_scope :with_samples, :include => [:sample_summaries, :samples]
 
 	def sample
-		today = Time.now.to_date
+		today = Time.zone.now.to_date
 
 		return if already_sampled?(today)
 

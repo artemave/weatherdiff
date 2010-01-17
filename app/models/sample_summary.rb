@@ -18,6 +18,7 @@ class SampleSummary < ActiveRecord::Base
     'drizzle'             => 3,
     'sunny intervals'     => 5,
     'cloudy'              => 4,
+    'grey cloud'          => 3.03,
     'light showers'       => 2.01,
     'light snow'          => 2.02,
     'light snow showers'  => 2.03,

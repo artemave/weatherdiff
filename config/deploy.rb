@@ -46,4 +46,4 @@ namespace :deploy do
   end
 end
 
-after "deploy:update", "deploy:install_gems", "deploy:load_submodules", "deploy:update_crontab"
+after "deploy:update_code", "deploy:install_gems", "deploy:load_submodules", "deploy:update_crontab"

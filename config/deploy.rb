@@ -29,20 +29,20 @@ set :use_sudo, false
 namespace :deploy do
 	task :restart do
 		desc "Restarting application"
-		run "touch #{release_path}/#{release_name}/tmp/restart.txt"
+		run "touch #{release_path}/tmp/restart.txt"
 	end
 
   task :update_crontab do
     desc "Updating crontab"
-    run "cd #{release_path}/#{release_name} && whenever --update-crontab #{application}"
+    run "cd #{release_path} && whenever --update-crontab #{application}"
   end
 
 	task :load_submodules do
-		run "cd #{release_path}/#{release_name}; git submodule update --init; git submodule update"
+		run "cd #{release_path}; git submodule update --init; git submodule update"
 	end
 
   task :install_gems do
-    run "cd #{release_path}/#{release_name}; rake gems:install"
+    run "cd #{release_path}; rake gems:install"
   end
 end
 

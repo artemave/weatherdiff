@@ -30,6 +30,11 @@ body {
   background: #ddd url(/images/footer_bg.png) repeat-x;
 }
 
+#logo {
+  width: 956px;
+  margin: 0 auto;
+}
+
 .site {
   width: 956px;
   padding: 1em;

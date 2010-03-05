@@ -34,7 +34,7 @@ namespace :deploy do
 
   task :update_crontab do
     desc "Updating crontab"
-    run "cd #{release_path} && whenever --update-crontab #{application}"
+#    run "cd #{release_path} && whenever --update-crontab #{application}"
   end
 
 	task :load_submodules do

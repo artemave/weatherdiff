@@ -1,19 +1,21 @@
+require 'array-utils'
+require 'location'
+
 class Report
-  attr_accessor :location1, :location2
+  attr_accessor :locations
   attr_reader :flot
+  attr_reader :id #XXX secret kick for form_for(@report...) to work
 
   def initialize(params = {})
-    @location1 = params[:location1]
-    @location2 = params[:location2]
+    @locations = params[:locations] ? fetch_locations(params[:locations]) : []
     @flot = {}
   end
 
   def generate_flot_data!
-    ls = Location.with_samples.find(:all, :conditions => ['name in (?,?)', location1, location2]);
     max_y, min_y, min_ts, max_ts = {}, {}, nil
     @flot[:data] = Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = [] } }
 
-    ls.each do |loc|
+    @locations.each do |loc|
       for ss in loc.sample_summaries
         ts = Time.gm(ss.rss_ts.year, ss.rss_ts.month, ss.rss_ts.day).to_i * 1000 # flot likes miliseconds
         max_ts = ts unless max_ts and max_ts > ts
@@ -47,5 +49,21 @@ class Report
   # a secret kick for restful routes to work
   def new_record?
     true
+  end
+
+  private
+
+  def fetch_locations(loc_names)
+    ls = Location.find(
+      :all,
+      :conditions => {:locations => {:name => loc_names}},
+      :include => [:sample_summaries, :samples]
+    ) #hopefully, loc_names will never be empty
+
+    missing_locations = loc_names ^ ls.map(&:name)
+    if missing_locations.size > 0
+      raise LocationNotFound.new missing_locations
+    end
+    ls
   end
 end

@@ -5,8 +5,8 @@
   <div class="search-form-table">
     <div class="search-form-cell">
       <div class="search-form-content">
-        Compare <%= f.text_field :location1, :class => 'ui-widget ui-corner-all search-form' %>
-        with <%= f.text_field :location2, :class => 'ui-widget ui-corner-all search-form' %>
+        Compare <%= text_field_tag 'report[locations][]', nil, :class => 'ui-widget ui-corner-all search-form' %>
+        with <%= text_field_tag 'report[locations][]', nil, :class => 'ui-widget ui-corner-all search-form' %>
       </div>
     </div>
     <div class="search-form-cell">

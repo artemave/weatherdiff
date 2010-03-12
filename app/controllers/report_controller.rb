@@ -1,3 +1,5 @@
+require 'location'
+
 class ReportController < ApplicationController
   layout 'pretty'
 
@@ -7,11 +9,11 @@ class ReportController < ApplicationController
   end
 
   def create
-    @report = Report.new(params[:report])
-    @report.generate_flot_data! #TODO error handling
-    
-    respond_to do |format|
-      format.js
+    begin
+      @report = Report.new(params[:report])
+      @report.generate_flot_data!
+    rescue LocationNotFound => e
+      render :template => 'shared/error_box', :locals => {:error_text => e.missing_locations.join(',')}
     end
   end
 end

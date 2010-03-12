@@ -3,7 +3,7 @@
 # In the development environment your application's code is reloaded on
 # every request.  This slows down response time but is perfect for development
 # since you don't have to restart the webserver when you make code changes.
-config.cache_classes = false
+config.cache_classes = true # workaround for https://rails.lighthouseapp.com/projects/8994/tickets/1339-arbase-should-not-be-nuking-its-children-just-because-it-lost-interest
 
 # Log error messages when you accidentally call methods on nil.
 config.whiny_nils = true

@@ -224,6 +224,8 @@ function plotAsSelected() {
 var sen_sel = $('#sensor_sel_tabs');
 var SENSORS = <%= @report.flot[:sensors].to_json %>;
 
+sen_sel.show();
+
 if (!sen_sel.tabs('length'))  {// crafty check if tabs have already been initialized
   sen_sel.prepend('<ul></ul>').tabs();
 

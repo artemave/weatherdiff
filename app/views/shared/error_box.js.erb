@@ -1,0 +1,11 @@
+$('#loading').hide();
+$('#sensor_sel_tabs').tabs('destroy').html('');
+$('#error_box')
+  .show('fast')
+  .queue(function () {
+    $('#error_box_text').html("there is no data for <%= error_text %>");
+    $(this).dequeue();
+  })
+  .delay(5000)
+  .queue(function () {$('#error_box_text').html(''); $(this).dequeue();})
+  .hide('fast');

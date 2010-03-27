@@ -16,6 +16,10 @@ class Location < ActiveRecord::Base
 	validates_presence_of :name, :feed, :tz
 	validates_uniqueness_of :name, :feed
 
+  def before_save
+    self.name = name.strip
+  end
+
   named_scope :with_samples, :include => [:sample_summaries, :samples]
 
 	def sample

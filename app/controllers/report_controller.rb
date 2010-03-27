@@ -13,7 +13,7 @@ class ReportController < ApplicationController
       @report = Report.new(params[:report])
       @report.generate_flot_data!
     rescue LocationNotFound => e
-      render :template => 'shared/error_box', :locals => {:error_text => e.missing_locations.join(',')}
+      render :template => 'shared/error_box', :locals => {:error_text => e.missing_locations.join('; ')}
     end
   end
 end

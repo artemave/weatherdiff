@@ -26,13 +26,18 @@
   var location_list = '<%= @locations.map {|l| l.name =~ /([^,]+)(?:, (.+))?$/; $2 ? "#{$1} (#{$2})" : $1}.join(', ') %>';
 
   function proceedToFlot() {
-    var ready_to_go = true;
-    $('input.ui-widget').each(function () {
-      if (!$(this).val()) {
-        ready_to_go = false;
-      }
-    });
-    if (ready_to_go)  {
+    function readyToFlot() {
+      var ready_to_flot = true;
+      
+      //check that all inputs are filled
+      $('input.ui-widget').each(function () { ready_to_flot = ready_to_flot && !!$(this).val() });
+      //check that we aren't already requesting flot (assuming that #loading only visible when request is in progress)
+      ready_to_flot =  ready_to_flot && !$('#loading:visible').length;
+
+      return ready_to_flot;
+    }
+
+    if (readyToFlot())  {
       $('#loading').show();
       //workaround to http://stackoverflow.com/questions/645555/should-jquerys-form-submit-not-trigger-onsubmit-within-the-form-tag
       $('form.new_report').get(0).onsubmit();

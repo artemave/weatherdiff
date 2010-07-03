@@ -7,6 +7,10 @@ class SampleSummary < ActiveRecord::Base
 
   default_scope :include => :samples, :order => 'rss_ts desc'
 
+  def after_create
+    logger.info "Sample summary: " + self.inspect
+  end
+
   cattr_reader :per_page
   @@per_page = 20
 

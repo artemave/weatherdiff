@@ -22,7 +22,7 @@ class Location < ActiveRecord::Base
   end
 
 	has_many :sample_summaries, :dependent => :destroy
-  has_many :samples, :through => :sample_summaries # that is for named_scope to get all the data in few queries
+  has_many :samples, :through => :sample_summaries # this is purely for :with_samples to get samples included
 	validates_presence_of :name, :feed, :tz
 	validates_uniqueness_of :name, :feed
 
@@ -36,41 +36,34 @@ class Location < ActiveRecord::Base
 		today = Time.zone.now.to_date
 
 		return if already_sampled?(today)
+    return if not first_sample_covers?(today)
 
 		logger.info "Start sampling #{name} for #{today}"
 
-		content = ''
-		open(feed) {|s| content = s.read }
-		rss = RSS::Parser.parse(content, false)
+    ss = sample_summaries.create(:rss_ts => Time.now.to_datetime)
 
-		raise "Empty feed for #{name} on #{today}" if rss.items.empty?
+    # extract overview
+    # title is a string like this:
+    # 'Sunday: sunny, Max Temp: 11&#xB0;C (52&#xB0;F), Min Temp: 2&#xB0;C (36&#xB0;F)'
+    # we want only 'sunny' from here
+    overview_value = first_feed_item.title.split(',').first.split(': ').last
 
-    first_item = rss.items[0]
+    # save overview
+    ss.samples.create(:name => 'overview', :value => overview_value)
 
-    unless first_item.guid.to_s =~ /#{today}/
-      logger.info "First feed item #{first_item.guid} #{first_item.guid} does not cover today #{today}. Skipping."
-      return
-    end
-
-    ss = nil
-		first_item.title.split(',').each_with_index do |ri, i|
+    # extract and save individual values (temperature, wind, etc.)
+    # description is a string like this:
+    # Max Temp: 26&#xB0;C (79&#xB0;F), Min Temp: 20&#xB0;C (68&#xB0;F), Wind Direction: ENE, Wind Speed: 5mph, Visibility: very good, Pressure: 1013mb, Humidity: 46%, UV risk: low, Sunrise: 04:51MSD, Sunset: 22:15MSD
+		first_feed_item.description.split(',').each do |ri|
 			ri =~ /^\s*([^:]+)\s*:\s*(.*)\s*$/
 			sample_name, val = $1, $2
 
-			# Title is a string like this:
-			# 'Sunday: sunny, Max Temp: 11&#xB0;C (52&#xB0;F), Min Temp: 2&#xB0;C (36&#xB0;F)'
-			# below we want to check if weekday equals to current. Because it can be for the 
-			# day after
-			if i == 0 
-				sample_name = 'overview' # we don't want weekday in db
-        ss = SampleSummary.create!(:rss_ts => Time.now.to_datetime, :location => self)
-			  logger.info "Sample summary: #{ss.inspect}"
-			end
+      # leave only celcius temperatures
+      if sample_name =~ /temp/i
+        val.gsub!(/.*?(-?\d+).*/, '\1')
+      end
 
-			val.gsub!(/.*?(-?\d+).*/, '\1') # leave only celcius temperature value
-
-			s = Sample.create!(:name => sample_name, :value => val, :sample_summary => ss)
-			logger.info "Sample: #{s.inspect}"
+			ss.samples.create(:name => sample_name, :value => val)
 		end
 	end
 
@@ -78,10 +71,33 @@ class Location < ActiveRecord::Base
 		logger.info "Is #{name} already sampled for #{date}?"
 		if sample_summaries.find :first, :conditions => [ 'DATE(rss_ts) = ?', date ]
       logger.info "Yes"
-      return true
+      true
     else
       logger.info "No"
-      return false
+      false
     end
 	end
+
+  private
+
+  def first_feed_item
+		@first_feed_item ||= begin
+      content = ''
+      open(feed) {|s| content = s.read }
+      rss = RSS::Parser.parse(content, false)
+
+      raise "Empty feed for #{name} on #{today}" if rss.items.empty?
+
+      rss.items[0]
+    end
+  end
+
+  def first_sample_covers?(date)
+    unless first_feed_item.guid.to_s =~ /#{date}/
+      logger.info "First feed item #{first_feed_item.guid} #{first_feed_item.guid} does not cover date #{date}. Skipping."
+      false
+    else
+      true
+    end
+  end
 end

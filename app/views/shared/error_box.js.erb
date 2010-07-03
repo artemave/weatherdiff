@@ -1,6 +1,8 @@
 $('#loading').hide();
 $('#sensor_sel_tabs').hide('fast');
 $('#error_box')
+  .clearQueue()
+  .queue(function () {$('#error_box_text').html(''); $(this).dequeue();})
   .show('fast')
   .queue(function () {
     $('#error_box_text').html('<%=h error_text %>');

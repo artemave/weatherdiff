@@ -3,9 +3,9 @@ $('#sensor_sel_tabs').hide('fast');
 $('#error_box')
   .show('fast')
   .queue(function () {
-    $('#error_box_text').html("No data for <%= error_text %>");
+    $('#error_box_text').html('<%=h error_text %>');
     $(this).dequeue();
   })
-  .delay(5000)
+  .delay(7000)
   .queue(function () {$('#error_box_text').html(''); $(this).dequeue();})
   .hide('fast');

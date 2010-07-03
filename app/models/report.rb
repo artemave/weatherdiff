@@ -54,16 +54,34 @@ class Report
   private
 
   def fetch_locations(loc_names)
-    ls = Location.find(
-      :all,
-      :conditions => {:locations => {:name => loc_names}},
-      :include => [:sample_summaries, :samples]
-    ) #hopefully, loc_names will never be empty
+    missing_locations = []
+    ambiguous_locations = []
+    locations = []
 
-    missing_locations = loc_names ^ ls.map(&:name)
-    if missing_locations.size > 0
-      raise LocationNotFound.new missing_locations
+    loc_names.each do |ln|
+      loc = Location.find(
+        :all,
+        :conditions => ["name like ?", "%#{ln}%"],
+        :include => [:sample_summaries, :samples]
+      )
+
+      if loc.empty?
+        missing_locations << ln
+      elsif loc.size > 1
+        ambiguous_locations << loc
+      else
+        locations << loc.first
+      end
     end
-    ls
+
+    if missing_locations.size > 0
+      raise Location::NotFound.new missing_locations
+    end
+
+    if ambiguous_locations.size > 0
+      raise Location::Ambiguous.new ambiguous_locations
+    end
+
+    locations
   end
 end

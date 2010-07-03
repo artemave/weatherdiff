@@ -1,16 +1,26 @@
 require 'rss/2.0'
 require 'open-uri'
 
-class LocationNotFound < Exception
-  attr_reader :missing_locations
-
-  def initialize(loc_names, *args)
-    @missing_locations = loc_names || []
-    super(*args)
-  end
-end
-
 class Location < ActiveRecord::Base
+
+  class NotFound < Exception
+    attr_reader :missing_locations
+
+    def initialize(loc_names, *args)
+      @missing_locations = loc_names || []
+      super(*args)
+    end
+  end
+
+  class Ambiguous < Exception
+    attr_reader :ambiguous_locations
+
+    def initialize(loc_names, *args)
+      @ambiguous_locations = loc_names || []
+      super(*args)
+    end
+  end
+
 	has_many :sample_summaries, :dependent => :destroy
   has_many :samples, :through => :sample_summaries # that is for named_scope to get all the data in few queries
 	validates_presence_of :name, :feed, :tz

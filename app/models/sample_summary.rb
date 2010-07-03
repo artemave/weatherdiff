@@ -29,7 +29,9 @@ class SampleSummary < ActiveRecord::Base
     'light snow showers'  => 2.03,
     'light snow shower'   => 4.01,
     'thundery showers'    => 1.02,
+    'thundery shower'     => 1.08,
     'misty'               => 3.01,
+    'mist'                => 3.05,
     'heavy snow'          => 1.03,
     'heavy snow shower'   => 1.05,
     'heavy snow showers'  => 1.06,
@@ -38,7 +40,9 @@ class SampleSummary < ActiveRecord::Base
     'sleet showers'       => 2.06,
     'light rain shower'   => 2.05,
     'heavy rain shower'   => 1.04,
+    'hail shower'         => 1.07,
     'foggy'               => 3.02,
+    'fog'                 => 3.04,
   }
 
   def overview

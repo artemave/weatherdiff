@@ -1,5 +1,5 @@
 set :user, 'artemave'
-ssh_options[:keys] = %W{#{ENV['HOME']}.ssh/id_rsa}
+ssh_options[:keys] = %W{#{ENV['HOME']}/.ssh/id_rsa}
 set :domain, 'mystique.dreamhost.com'
 set :project, 'weatherdiff'
 set :application, "weatherdiff.com"

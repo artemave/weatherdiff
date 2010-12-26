@@ -23,7 +23,7 @@ role :web, domain
 role :db,  domain, :primary => true
 
 set :deploy_to, applicationdir
-set :deploy_via, :remote_cache
+#set :deploy_via, :remote_cache
 set :use_sudo, false
 
 namespace :deploy do
@@ -42,7 +42,7 @@ namespace :deploy do
 	end
 
   task :install_gems do
-    run "export PATH=~/.gems/bin:$PATH; export GEM_PATH=~/.gems:$GEM_PATH; cd #{release_path} && rake gems:install"
+    run "export PATH=/home/#{user}/.gems/bin:$PATH; export GEM_PATH=$GEM_PATH:/home/#{user}/.gems; cd #{release_path} && rake gems:install"
   end
 
   task :tag_release do

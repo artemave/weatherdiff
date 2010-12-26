@@ -23,7 +23,8 @@ role :web, domain
 role :db,  domain, :primary => true
 
 set :deploy_to, applicationdir
-#set :deploy_via, :remote_cache
+set :deploy_via, :remote_cache
+set :git_enable_submodules, 1
 set :use_sudo, false
 
 namespace :deploy do
@@ -38,7 +39,7 @@ namespace :deploy do
   end
 
 	task :load_submodules do
-		run "cd #{release_path}; git submodule update --init; git submodule update"
+		#run "cd #{release_path}; git submodule update --init; git submodule update"
 	end
 
   task :install_gems do

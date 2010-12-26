@@ -51,4 +51,4 @@ namespace :deploy do
 end
 
 after "deploy:update_code", "deploy:install_gems", "deploy:load_submodules", "deploy:update_crontab"
-after "deploy:restart", "deploy:tag_release"
+#after "deploy:restart", "deploy:tag_release"

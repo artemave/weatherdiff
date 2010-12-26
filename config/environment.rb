@@ -9,7 +9,7 @@ RAILS_GEM_VERSION = '2.3.10' unless defined? RAILS_GEM_VERSION
 
 if ENV['RAILS_ENV'] == 'production'  # don't bother on dev
   #dreamhost specific hack
-  ENV['GEM_PATH'] = '/home/artemave/.gems' + ':/usr/lib/ruby/gems/1.8'
+  ENV['GEM_PATH'] = File.expand_path('~/.gems') + ':/usr/lib/ruby/gems/1.8'
 end
 
 # Bootstrap the Rails environment, frameworks, and default configuration

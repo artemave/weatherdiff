@@ -42,6 +42,8 @@ namespace :deploy do
 	end
 
   task :install_gems do
+    run "echo $PATH"
+    run "echo $GEM_PATH"
     run "cd #{release_path}; rake gems:install"
   end
 

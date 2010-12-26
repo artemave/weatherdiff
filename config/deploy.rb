@@ -42,9 +42,7 @@ namespace :deploy do
 	end
 
   task :install_gems do
-    run "export PATH=~/.gems/bin:$PATH"
-    run "export GEM_PATH=~/.gems:$GEM_PATH"
-    run "cd #{release_path}; rake gems:install"
+    run "export PATH=~/.gems/bin:$PATH; export GEM_PATH=~/.gems:$GEM_PATH; cd #{release_path} && rake gems:install"
   end
 
   task :tag_release do

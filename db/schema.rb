@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(:version => 20100112151203) do
     t.integer  "sample_summary_id"
   end
 
-  add_index "samples", ["location_id"], :name => "fk_sample_location"
   add_index "samples", ["sample_summary_id"], :name => "index_samples_on_sample_summary_id"
 
   create_table "users", :force => true do |t|

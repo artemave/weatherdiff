@@ -4,7 +4,6 @@ development:
   adapter: mysql
   database: weatherdiff_development
   username: root
-  password: root
   host: localhost
 #  socket: /var/lib/mysql/mysql.sock
 

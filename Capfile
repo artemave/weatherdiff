@@ -1,3 +1,10 @@
-load 'deploy' if respond_to?(:namespace) # cap2 differentiator
-Dir['vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
-load 'config/deploy'
+require 'capistrano-deploy'
+use_recipes :git, :bundle, :rails, :passenger, :whenever
+
+server 'mystique.dreamhost.com', :web, :app, :db, :primary => true
+set :user, 'artemave'
+set :repository, "git://github.com/artemave/weatherdiff.git"
+set :deploy_to, "/home/#{user}/weatherdiff"
+set :enable_submodules, true
+
+after 'deploy:update', 'bundle:install', 'whenever:update_crontab'

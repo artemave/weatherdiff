@@ -9,4 +9,6 @@ gem 'whenever', :require => false
 
 group :development do
   gem 'capistrano'
+  gem 'capistrano-deploy'
+  gem 'thin'
 end
